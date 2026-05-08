@@ -6,16 +6,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useFinances } from "@/lib/store/finance-store";
 import { ThemeToggle } from "./ThemeToggle";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { signOut } from "@/app/actions/auth";
 import { BrandWordmark, BrandOrb } from "@/components/brand/BrandWordmark";
 
+// On mobile these routes live in BottomNav — sidebar only shows them on desktop (lg:)
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "Budgets", href: "/budgets", icon: "account_balance_wallet" },
-  { label: "Debt", href: "/debt", icon: "credit_score" },
-  { label: "Advisory", href: "/advisory", icon: "psychology" },
-  { label: "Reports", href: "/reports", icon: "insights" },
+  { label: "Dashboard", href: "/dashboard", icon: "dashboard", mobileHidden: true },
+  { label: "Budgets", href: "/budgets", icon: "account_balance_wallet", mobileHidden: true },
+  { label: "Debt", href: "/debt", icon: "credit_score", mobileHidden: true },
+  { label: "Advisory", href: "/advisory", icon: "psychology", mobileHidden: true },
+  { label: "Reports", href: "/reports", icon: "insights", mobileHidden: false },
 ];
 
 interface SidebarProps {
@@ -26,7 +26,6 @@ interface SidebarProps {
 function SidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const { user, isGuest } = useFinances();
-  const router = useRouter();
 
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ??
@@ -41,11 +40,8 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     .toUpperCase();
 
   async function handleSignOut() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
     onClose?.();
-    router.push("/dashboard");
-    router.refresh();
+    await signOut();
   }
 
   return (
@@ -87,6 +83,8 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                 delay: i * 0.05,
                 ease: [0.22, 1, 0.36, 1],
               }}
+              // Primary nav items hidden on mobile — they live in BottomNav
+              className={item.mobileHidden ? "hidden lg:block" : undefined}
             >
               <Link
                 href={item.href}
@@ -170,9 +168,9 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         </motion.div>
       </motion.div>
 
-      {/* Add Finance CTA */}
+      {/* Add Finance CTA — hidden on mobile (use BottomNav centre button instead) */}
       <motion.div
-        className="px-3 mb-4"
+        className="hidden lg:block px-3 mb-4"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}

@@ -2,8 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── PWA / mobile base ───────────────────────────────────────────────────── */
+html,
+body {
+  /* Prevent rubber-band overscroll — makes installed PWA feel native */
+  overscroll-behavior: none;
+  /* Full height for standalone PWA display mode */
+  height: 100%;
+}
+
 /* ─── Colour tokens (RGB channels for Tailwind opacity utilities) ─── */
 :root {
+  /* Safe area insets for iPhone notch / Dynamic Island / home indicator */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
   /* Light mode */
   --background: 248 250 251;
   --surface: 255 255 255;

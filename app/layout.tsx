@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope, JetBrains_Mono } from "next/font/google";
 import { FinanceProvider } from "@/lib/store/finance-store";
 import { ToastProvider, Toaster } from "@/components/ui/Toaster";
@@ -18,10 +18,35 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#006874" },
+    { media: "(prefers-color-scheme: dark)", color: "#006874" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "INSYT. — Intelligent Financial Clarity",
   description:
     "INSYT. gives you complete financial visibility with AI that thinks alongside you — cashflow forecasting, debt strategy, budget intelligence, and personalised insights.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "INSYT.",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({

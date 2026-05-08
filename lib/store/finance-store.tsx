@@ -278,10 +278,49 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   // ── Auth state ────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Migrate any guest localStorage data into Supabase then clear it.
+    // Safe to call multiple times — clearLocal() ensures idempotency.
+    async function migrateLocalToSupabase(uid: string) {
+      const local = loadLocal();
+      const hasLocal =
+        local.income.length > 0 ||
+        local.expenses.length > 0 ||
+        local.debts.length > 0 ||
+        local.subscriptions.length > 0 ||
+        local.goals.length > 0;
+
+      if (hasLocal) {
+        await Promise.all([
+          ...local.income.map((i) =>
+            supabase.from("income").insert({ ...i, id: undefined, user_id: uid }),
+          ),
+          ...local.expenses.map((e) =>
+            supabase.from("expenses").insert({ ...e, id: undefined, user_id: uid }),
+          ),
+          ...local.debts.map((d) =>
+            supabase.from("debts").insert({ ...d, id: undefined, user_id: uid }),
+          ),
+          ...local.subscriptions.map((s) =>
+            supabase.from("subscriptions").insert({ ...s, id: undefined, user_id: uid }),
+          ),
+          ...local.goals.map((g) =>
+            supabase.from("savings_goals").insert({ ...g, id: undefined, user_id: uid }),
+          ),
+        ]);
+      }
+
+      // Always wipe localStorage once authenticated — authenticated users
+      // never read from it, so stale guest data must not survive a sign-out.
+      clearLocal();
+    }
+
+    // Initial load — covers OAuth/email-confirmation flows where the session
+    // is already set via cookie on page load (INITIAL_SESSION, not SIGNED_IN).
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
+        await migrateLocalToSupabase(u.id);
         loadFromSupabase(u.id);
       } else {
         loadFromLocal();
@@ -294,50 +333,29 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        // Auto-migrate local guest data on first sign-in
+        // SIGNED_IN fires for same-page sign-ins (email/password).
+        // migrateLocalToSupabase is idempotent — if getSession already
+        // cleared localStorage, this is a no-op.
         if (event === "SIGNED_IN") {
-          const local = loadLocal();
-          const hasLocal =
-            local.income.length > 0 ||
-            local.expenses.length > 0 ||
-            local.debts.length > 0 ||
-            local.subscriptions.length > 0 ||
-            local.goals.length > 0;
-          if (hasLocal) {
-            // Migrate local data then reload from Supabase
-            await Promise.all([
-              ...local.income.map((i) =>
-                supabase
-                  .from("income")
-                  .insert({ ...i, id: undefined, user_id: u.id }),
-              ),
-              ...local.expenses.map((e) =>
-                supabase
-                  .from("expenses")
-                  .insert({ ...e, id: undefined, user_id: u.id }),
-              ),
-              ...local.debts.map((d) =>
-                supabase
-                  .from("debts")
-                  .insert({ ...d, id: undefined, user_id: u.id }),
-              ),
-              ...local.subscriptions.map((s) =>
-                supabase
-                  .from("subscriptions")
-                  .insert({ ...s, id: undefined, user_id: u.id }),
-              ),
-              ...local.goals.map((g) =>
-                supabase
-                  .from("savings_goals")
-                  .insert({ ...g, id: undefined, user_id: u.id }),
-              ),
-            ]);
-            clearLocal();
-          }
+          await migrateLocalToSupabase(u.id);
         }
         loadFromSupabase(u.id);
       } else {
-        loadFromLocal();
+        // On sign-out: wipe all in-memory state and localStorage so the next
+        // guest session starts completely clean.
+        if (event === "SIGNED_OUT") {
+          clearLocal();
+          setIncome([]);
+          setExpenses([]);
+          setDebts([]);
+          setSubscriptions([]);
+          setGoals([]);
+          setInsightsState([]);
+          setIsLoading(false);
+        } else {
+          // No session and not a sign-out (e.g. initial load with no account)
+          loadFromLocal();
+        }
       }
     });
 

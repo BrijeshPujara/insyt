@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
+import { BottomNav } from "./BottomNav";
 import { PageTransition } from "./PageTransition";
 import { BrandWordmark } from "@/components/brand/BrandWordmark";
 
@@ -48,9 +49,14 @@ export function MainLayoutClient({ children }: { children: React.ReactNode }) {
           <BrandWordmark size="sm" />
         </div>
 
-        {/* Page content with transitions */}
-        <PageTransition>{children}</PageTransition>
+        {/* Page content with transitions — pb-16 lg:pb-0 clears the mobile bottom nav */}
+        <div className="flex-1 overflow-y-auto pb-16 lg:pb-0">
+          <PageTransition>{children}</PageTransition>
+        </div>
       </div>
+
+      {/* Mobile bottom navigation */}
+      <BottomNav />
     </div>
   );
 }

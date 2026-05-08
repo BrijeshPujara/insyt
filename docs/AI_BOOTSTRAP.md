@@ -59,7 +59,7 @@ Key paths:
   - app/(main)/ → authenticated pages
   - app/(auth)/ → login/signup
   - app/actions/ → Server Actions
-  - components/layout/ → Sidebar, PageTransition, MainLayoutClient, ThemeToggle
+  - components/layout/ → Sidebar, BottomNav, PageTransition, MainLayoutClient, ThemeToggle
   - lib/store/finance-store.tsx → global state
   - lib/types.ts → all TypeScript types
   - docs/ → project intelligence (this system)
@@ -210,3 +210,8 @@ Quick reference for decisions already made (so they don't get re-debated):
 | claude-sonnet-4-6 model | Best quality/cost balance for financial coaching |
 | Single FinanceStore context | Simpler than Redux/Zustand for this data size |
 | No shadcn component library (full) | Custom components for better design control |
+| PWA via @ducanh2912/next-pwa | Maintained Next.js 15 fork; Workbox-based SW generation |
+| SW disabled in dev | Prevents stale-cache confusion during active development |
+| BottomNav on mobile | Native app pattern for <5 primary routes; sidebar for secondary |
+| SW NetworkOnly for AI chat | Streaming responses cannot be cached — skip entirely |
+| SW NetworkFirst for insights | Aligns with 24h data_hash cache TTL; offline shows stale OK |

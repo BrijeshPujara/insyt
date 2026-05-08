@@ -34,11 +34,16 @@ lumina-finance/
 │   ├── add-finances/       # Data entry forms
 │   ├── auth/               # Login, Signup, GoogleAuthButton
 │   ├── dashboard/          # Dashboard-specific widgets
-│   ├── layout/             # Sidebar, ThemeToggle, PageTransition, MainLayoutClient
+│   ├── layout/             # Sidebar, BottomNav, ThemeToggle, PageTransition, MainLayoutClient
 │   ├── settings/           # Settings UI
 │   └── ui/                 # Shared UI primitives (Toaster, etc.)
 ├── docs/                   # Project intelligence (this system)
 ├── agents/                 # AI agent definitions
+├── public/
+│   ├── manifest.json       # PWA web app manifest
+│   └── icons/              # PWA icons (icon-192.png, icon-512.png)
+├── scripts/
+│   └── generate-icons.js   # Node script to regenerate PWA icons (run once)
 ├── lib/
 │   ├── anthropic.ts        # Anthropic client + prompt builders
 │   ├── types.ts            # All TypeScript types (DB + domain)
@@ -52,7 +57,7 @@ lumina-finance/
 │   └── migrations/         # SQL migrations (001_schema.sql)
 ├── middleware.ts            # Route protection (Supabase session check)
 ├── tailwind.config.ts
-├── next.config.ts
+├── next.config.ts           # withPWA wrapper + runtimeCaching (service worker)
 └── tsconfig.json
 ```
 
@@ -146,7 +151,58 @@ const { income, addIncome, isGuest } = useFinances();
 1. Email/password: Server Action → `supabase.auth.signUp` / `signInWithPassword`
 2. Google OAuth: Client → `supabase.auth.signInWithOAuth` → redirect to Google → Supabase callback → `/api/auth/callback` → `supabase.auth.exchangeCodeForSession` → redirect to `/dashboard`
 3. Middleware (`middleware.ts`) protects all `(main)` routes — redirects to `/login` if no session
-4. `signOut`: Supabase client signOut → `router.push("/login")` + `router.refresh()`
+4. `signOut`: Server Action `signOut()` in `app/actions/auth.ts` → clears cookie → `redirect("/login")`
+
+---
+
+## PWA (Progressive Web App)
+
+INSYT. is a fully installable PWA powered by `@ducanh2912/next-pwa` (Workbox-based).
+
+### Service Worker
+- Generated at build time into `public/sw.js`
+- **Disabled in development** (`NODE_ENV === "development"`) — prevents stale cache during active development
+- Activated only on `npm run build` + `npm start` (production)
+- Configured in `next.config.ts` via `workboxOptions.runtimeCaching`
+
+### Caching Strategy
+| Route | Strategy | TTL |
+|---|---|---|
+| Google Fonts stylesheets | CacheFirst | 365 days |
+| Google Fonts webfonts | CacheFirst | 365 days |
+| `/api/ai/insights` | NetworkFirst | 24h |
+| `/api/ai/chat` | NetworkOnly | never (streaming) |
+| Other `/api/*` | NetworkFirst | 60s |
+| Next.js static assets | CacheFirst (auto) | — |
+
+### Offline Fallback
+- `app/offline/page.tsx` — shown when a route is unvisited and network is unavailable
+- Guest users retain full app functionality offline (data in localStorage)
+- Authenticated users can view previously cached pages offline
+
+### Mobile Navigation
+- **Desktop (≥1024px):** Fixed left sidebar (64px wide)
+- **Mobile (<1024px):** `BottomNav` component (`components/layout/BottomNav.tsx`) — fixed bottom tab bar with 5 items: Dashboard, Budgets, ➕ Add (centre), Debt, Advisory
+- Sidebar on mobile shows: Reports, Settings, Sign out, theme toggle (secondary actions)
+- `safe-area-inset-bottom` applied to BottomNav and body — handles iPhone home indicator / Dynamic Island
+
+### Manifest
+- `public/manifest.json` — `display: standalone`, `theme_color: #006874`, 192 + 512 icons
+- Icons generated via `node scripts/generate-icons.js` (uses `canvas` package)
+- Re-run the script if the brand design changes
+
+### Rebuilding Icons
+```bash
+npm install  # canvas is a devDependency
+node scripts/generate-icons.js
+```
+
+### Build + Test PWA
+```bash
+npm run build   # generates sw.js + workbox-*.js in public/
+npm start       # serve production build on :3000
+# Then: Chrome DevTools → Application → Manifest / Service Workers / Lighthouse
+```
 
 ### Database Schema
 Tables (all with RLS enabled, `user_id` FK to `auth.users`):
