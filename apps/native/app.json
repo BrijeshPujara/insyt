@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "INSYT.",
+    "slug": "insyt-finance",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "scheme": "com.insyt.finance",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0e1011"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.insyt.finance"
+    },
+    "android": {
+      "package": "com.insyt.finance",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0e1011"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0e1011",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "INSYT. uses Face ID to secure your financial data."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

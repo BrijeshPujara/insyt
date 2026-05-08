@@ -1,0 +1,48 @@
+{
+  "name": "@insyt/native",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "expo start",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "build": "expo export",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@insyt/core": "*",
+    "@insyt/store": "*",
+    "expo": "~54.0.33",
+    "expo-router": "~55.0.14",
+    "expo-status-bar": "~3.0.9",
+    "expo-blur": "~55.0.14",
+    "expo-haptics": "~55.0.14",
+    "expo-local-authentication": "~55.0.13",
+    "expo-secure-store": "~55.0.13",
+    "expo-auth-session": "~55.0.15",
+    "expo-web-browser": "~55.0.15",
+    "expo-font": "~55.0.7",
+    "expo-splash-screen": "~55.0.20",
+    "expo-linear-gradient": "~55.0.13",
+    "moti": "^0.30.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-reanimated": "~4.3.1",
+    "react-native-gesture-handler": "~2.31.2",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.24.0",
+    "@react-native-async-storage/async-storage": "~3.0.2",
+    "nativewind": "~4.2.3",
+    "tailwindcss": "^3.4.17",
+    "zod": "^3.23.8",
+    "date-fns": "^4.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@types/react": "~19.1.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
