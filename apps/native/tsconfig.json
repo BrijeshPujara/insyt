@@ -1,6 +1,14 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@insyt/core": ["../../packages/core/src/index.ts"],
+      "@insyt/core/*": ["../../packages/core/src/*"],
+      "@insyt/store": ["../../packages/store/src/index.ts"],
+      "@insyt/store/*": ["../../packages/store/src/*"]
+    }
   }
 }
