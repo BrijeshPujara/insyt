@@ -348,8 +348,10 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         // cleared localStorage, this is a no-op.
         if (event === "SIGNED_IN") {
           await migrateLocalToSupabase(u.id);
+          loadFromSupabase(u.id);
         }
-        loadFromSupabase(u.id);
+        // TOKEN_REFRESHED / USER_UPDATED / INITIAL_SESSION — just update
+        // setUser(u) above; data is already loaded from getSession() on mount.
       } else {
         // On sign-out: wipe all in-memory state and localStorage so the next
         // guest session starts completely clean.
