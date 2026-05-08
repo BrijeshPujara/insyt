@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   cn,
   formatGBP,
@@ -43,9 +44,32 @@ export function AddFinancesClient({
   goals,
 }: Props) {
   const store = useFinances();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("income");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const currentIndex = tabs.findIndex((t) => t.id === activeTab);
+  const isFirst = currentIndex === 0;
+  const isLast = currentIndex === tabs.length - 1;
+
+  function goNext() {
+    if (!isLast) {
+      setActiveTab(tabs[currentIndex + 1].id);
+      setError(null);
+    }
+  }
+
+  function goBack() {
+    if (!isFirst) {
+      setActiveTab(tabs[currentIndex - 1].id);
+      setError(null);
+    }
+  }
+
+  function finish() {
+    router.push("/dashboard");
+  }
 
   async function withSubmit(fn: () => Promise<void>) {
     setSubmitting(true);
@@ -59,8 +83,47 @@ export function AddFinancesClient({
     }
   }
 
+  const NavFooter = () => (
+    <div className="flex items-center justify-between pt-2">
+      <button
+        onClick={goBack}
+        className={cn(
+          "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all",
+          isFirst
+            ? "invisible"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted",
+        )}
+      >
+        <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+        Back
+      </button>
+      {isLast ? (
+        <button
+          onClick={finish}
+          className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-all teal-glow"
+        >
+          Finish
+          <span className="material-symbols-outlined text-[16px]">check</span>
+        </button>
+      ) : (
+        <button
+          onClick={goNext}
+          className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-primary/12 text-primary text-sm font-semibold hover:bg-primary/22 border border-primary/20 transition-all"
+        >
+          Next
+          <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <div className="space-y-4">
+      {/* Step indicator */}
+      <p className="text-xs text-muted-foreground font-medium px-1">
+        Step {currentIndex + 1} of {tabs.length}
+      </p>
+
       {/* Tabs */}
       <div className="flex gap-1 p-1 bg-muted rounded-xl">
         {tabs.map((tab) => (
@@ -203,6 +266,7 @@ export function AddFinancesClient({
               </div>
             </div>
           )}
+          <NavFooter />
         </div>
       )}
 
@@ -358,6 +422,7 @@ export function AddFinancesClient({
               </div>
             </div>
           )}
+          <NavFooter />
         </div>
       )}
 
@@ -508,6 +573,7 @@ export function AddFinancesClient({
               </div>
             </div>
           )}
+          <NavFooter />
         </div>
       )}
 
@@ -620,6 +686,7 @@ export function AddFinancesClient({
               </div>
             </div>
           )}
+          <NavFooter />
         </div>
       )}
 
@@ -813,6 +880,7 @@ export function AddFinancesClient({
               </div>
             </div>
           )}
+          <NavFooter />
         </div>
       )}
     </div>

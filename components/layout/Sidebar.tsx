@@ -11,10 +11,25 @@ import { BrandWordmark, BrandOrb } from "@/components/brand/BrandWordmark";
 
 // On mobile these routes live in BottomNav — sidebar only shows them on desktop (lg:)
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard", mobileHidden: true },
-  { label: "Budgets", href: "/budgets", icon: "account_balance_wallet", mobileHidden: true },
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: "dashboard",
+    mobileHidden: true,
+  },
+  {
+    label: "Budgets",
+    href: "/budgets",
+    icon: "account_balance_wallet",
+    mobileHidden: true,
+  },
   { label: "Debt", href: "/debt", icon: "credit_score", mobileHidden: true },
-  { label: "Advisory", href: "/advisory", icon: "psychology", mobileHidden: true },
+  {
+    label: "Advisory",
+    href: "/advisory",
+    icon: "psychology",
+    mobileHidden: true,
+  },
   { label: "Reports", href: "/reports", icon: "insights", mobileHidden: false },
 ];
 
@@ -150,7 +165,10 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             onClick={onClose}
             className="group w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-primary/18 bg-primary/6 hover:bg-primary/12 transition-all relative overflow-hidden"
           >
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "var(--ai-grad-soft)" }} />
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              style={{ background: "var(--ai-grad-soft)" }}
+            />
             <span
               className="material-symbols-outlined text-[16px] text-primary relative z-10"
               style={{ fontVariationSettings: "'FILL' 1" }}
@@ -295,7 +313,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   return (
     <>
       {/* Desktop: always visible, static */}
-      <nav className="hidden lg:flex h-screen w-64 fixed left-0 top-0 sidebar-surface flex-col py-6 z-50">
+      <nav className="hidden lg:flex h-[100dvh] w-64 fixed left-0 top-0 sidebar-surface flex-col py-6 z-50 overflow-y-auto">
         <SidebarContent />
       </nav>
 
@@ -312,7 +330,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
               damping: 36,
               mass: 0.85,
             }}
-            className="lg:hidden h-screen w-64 fixed left-0 top-0 sidebar-surface flex flex-col py-6 z-50"
+            className="lg:hidden h-[100dvh] w-64 fixed left-0 top-0 sidebar-surface flex flex-col py-6 z-50 overflow-y-auto"
           >
             <SidebarContent onClose={onClose} />
           </motion.nav>
