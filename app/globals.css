@@ -84,9 +84,23 @@ body {
 
   /* AI gradient tokens (light) */
   --ai-grad: linear-gradient(135deg, #0891b2 0%, #0d9488 50%, #059669 100%);
-  --ai-grad-soft: linear-gradient(135deg, rgb(8 145 178 / 0.12) 0%, rgb(13 148 136 / 0.08) 50%, rgb(5 150 105 / 0.06) 100%);
-  --aurora: radial-gradient(ellipse 80% 50% at 20% 0%, rgb(8 145 178 / 0.1) 0%, transparent 70%),
-            radial-gradient(ellipse 60% 60% at 80% 100%, rgb(13 148 136 / 0.07) 0%, transparent 70%);
+  --ai-grad-soft: linear-gradient(
+    135deg,
+    rgb(8 145 178 / 0.12) 0%,
+    rgb(13 148 136 / 0.08) 50%,
+    rgb(5 150 105 / 0.06) 100%
+  );
+  --aurora:
+    radial-gradient(
+      ellipse 80% 50% at 20% 0%,
+      rgb(8 145 178 / 0.1) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 60% 60% at 80% 100%,
+      rgb(13 148 136 / 0.07) 0%,
+      transparent 70%
+    );
 }
 
 .dark {
@@ -159,10 +173,28 @@ body {
 
   /* AI gradient tokens (dark) */
   --ai-grad: linear-gradient(135deg, #22d3ee 0%, #14b8a6 50%, #34d399 100%);
-  --ai-grad-soft: linear-gradient(135deg, rgb(34 211 238 / 0.18) 0%, rgb(20 184 166 / 0.13) 50%, rgb(52 211 153 / 0.09) 100%);
-  --aurora: radial-gradient(ellipse 80% 50% at 20% 0%, rgb(34 211 238 / 0.09) 0%, transparent 70%),
-            radial-gradient(ellipse 60% 60% at 80% 100%, rgb(20 184 166 / 0.07) 0%, transparent 70%),
-            radial-gradient(ellipse 40% 80% at 50% 50%, rgb(52 211 153 / 0.04) 0%, transparent 70%);
+  --ai-grad-soft: linear-gradient(
+    135deg,
+    rgb(34 211 238 / 0.18) 0%,
+    rgb(20 184 166 / 0.13) 50%,
+    rgb(52 211 153 / 0.09) 100%
+  );
+  --aurora:
+    radial-gradient(
+      ellipse 80% 50% at 20% 0%,
+      rgb(34 211 238 / 0.09) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 60% 60% at 80% 100%,
+      rgb(20 184 166 / 0.07) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40% 80% at 50% 50%,
+      rgb(52 211 153 / 0.04) 0%,
+      transparent 70%
+    );
 }
 
 /* ─── Keyframes ─── */
@@ -274,18 +306,33 @@ body {
 }
 
 @keyframes orb-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes float-y {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 @keyframes counter-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ─── Base ─── */

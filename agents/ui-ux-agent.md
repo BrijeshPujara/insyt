@@ -38,6 +38,7 @@ This agent is responsible for all visual design, interaction design, motion, acc
 The UI should feel like it was designed by a small, obsessive team who cared deeply about every pixel. Think Linear's attention to detail, Apple's restraint, Arc's personality.
 
 **Key principles this agent follows:**
+
 - Less is more — remove before adding
 - Every element earns its place
 - Motion communicates, never decorates
@@ -49,6 +50,7 @@ The UI should feel like it was designed by a small, obsessive team who cared dee
 ## Technical Standards
 
 ### Component Structure
+
 ```tsx
 // Always: client component marker at top if using hooks/events
 "use client";
@@ -57,11 +59,22 @@ The UI should feel like it was designed by a small, obsessive team who cared dee
 import { motion, AnimatePresence } from "framer-motion";
 
 // Standard stagger pattern for lists
-const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.07 } } };
-const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } } };
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.07 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+  },
+};
 ```
 
 ### Styling Rules
+
 - Use `cn()` from `lib/utils.ts` for conditional classes
 - Use CSS tokens from `globals.css`, never hardcoded colours
 - Cards use `.glass-card` class
@@ -71,6 +84,7 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transiti
 - Dark/light mode: test both before shipping
 
 ### Animation Timing (quick reference)
+
 - Page enter: 220ms, `[0.22, 1, 0.36, 1]`
 - Page exit: 140ms, `easeIn`
 - Element entrance: 200–350ms

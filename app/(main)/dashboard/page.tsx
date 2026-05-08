@@ -431,14 +431,26 @@ export default function DashboardPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/4 via-transparent to-transparent pointer-events-none" />
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
+                    <span
+                      className="material-symbols-outlined text-primary text-[20px]"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      chat
+                    </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <h3 className="text-sm font-semibold text-foreground">INSYT<span className="text-primary">.</span> AI Chat</h3>
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-primary/10 text-primary uppercase tracking-wide">Pro</span>
+                      <h3 className="text-sm font-semibold text-foreground">
+                        INSYT<span className="text-primary">.</span> AI Chat
+                      </h3>
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-primary/10 text-primary uppercase tracking-wide">
+                        Pro
+                      </span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Chat with your personal AI coach about your finances — available in the paid plan.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Chat with your personal AI coach about your finances —
+                      available in the paid plan.
+                    </p>
                   </div>
                 </div>
               </div>

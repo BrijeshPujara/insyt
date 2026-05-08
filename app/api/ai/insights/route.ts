@@ -3,7 +3,14 @@ import { anthropic, buildInsightsPrompt } from "@/lib/anthropic";
 import { computeFinancialSummary } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import { createHash } from "crypto";
-import type { Income, Expense, Debt, Subscription, SavingsGoal, AIInsight } from "@/lib/types";
+import type {
+  Income,
+  Expense,
+  Debt,
+  Subscription,
+  SavingsGoal,
+  AIInsight,
+} from "@/lib/types";
 
 // Cache TTL: re-generate insights only after this many hours (or when data changes)
 const CACHE_TTL_HOURS = 24;
@@ -20,18 +27,30 @@ function computeDataHash(
   goals: SavingsGoal[],
 ): string {
   const fingerprint = JSON.stringify({
-    income:  income.map((i) => ({ a: i.amount, f: i.frequency, s: i.source })).sort((a, b) => a.s.localeCompare(b.s)),
-    expenses: expenses.map((e) => ({ a: e.amount, f: e.frequency, n: e.name })).sort((a, b) => a.n.localeCompare(b.n)),
-    debts:   debts.map((d) => ({ b: d.balance, r: d.interest_rate, m: d.minimum_payment })),
-    subs:    subscriptions.map((s) => ({ a: s.amount, n: s.name })).sort((a, b) => a.n.localeCompare(b.n)),
-    goals:   goals.map((g) => ({ c: g.current_amount, t: g.target_amount })),
+    income: income
+      .map((i) => ({ a: i.amount, f: i.frequency, s: i.source }))
+      .sort((a, b) => a.s.localeCompare(b.s)),
+    expenses: expenses
+      .map((e) => ({ a: e.amount, f: e.frequency, n: e.name }))
+      .sort((a, b) => a.n.localeCompare(b.n)),
+    debts: debts.map((d) => ({
+      b: d.balance,
+      r: d.interest_rate,
+      m: d.minimum_payment,
+    })),
+    subs: subscriptions
+      .map((s) => ({ a: s.amount, n: s.name }))
+      .sort((a, b) => a.n.localeCompare(b.n)),
+    goals: goals.map((g) => ({ c: g.current_amount, t: g.target_amount })),
   });
   return createHash("sha256").update(fingerprint).digest("hex").slice(0, 16);
 }
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const body = await request.json().catch(() => ({}));
   // Allow the client to force a fresh generation (e.g., after data changes)
@@ -43,11 +62,31 @@ export async function POST(request: Request) {
 
   if (user) {
     const [iRes, eRes, dRes, sRes, gRes, pRes] = await Promise.all([
-      supabase.from("income").select("*").eq("user_id", user.id).eq("is_active", true),
-      supabase.from("expenses").select("*").eq("user_id", user.id).eq("is_active", true),
-      supabase.from("debts").select("*").eq("user_id", user.id).eq("is_active", true),
-      supabase.from("subscriptions").select("*").eq("user_id", user.id).eq("is_active", true),
-      supabase.from("savings_goals").select("*").eq("user_id", user.id).eq("is_active", true),
+      supabase
+        .from("income")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true),
+      supabase
+        .from("expenses")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true),
+      supabase
+        .from("debts")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true),
+      supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true),
+      supabase
+        .from("savings_goals")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true),
       supabase.from("profiles").select("full_name").eq("id", user.id).single(),
     ]);
     income = (iRes.data ?? []) as Income[];
@@ -55,7 +94,9 @@ export async function POST(request: Request) {
     debts = (dRes.data ?? []) as Debt[];
     subscriptions = (sRes.data ?? []) as Subscription[];
     goals = (gRes.data ?? []) as SavingsGoal[];
-    userName = (pRes.data as { full_name: string | null } | null)?.full_name ?? undefined;
+    userName =
+      (pRes.data as { full_name: string | null } | null)?.full_name ??
+      undefined;
   } else {
     // Guest: financial data passed in request body
     income = body.income ?? [];
@@ -65,12 +106,26 @@ export async function POST(request: Request) {
     goals = body.goals ?? [];
   }
 
-  const summary = computeFinancialSummary(income, expenses, debts, subscriptions, goals);
-  const dataHash = computeDataHash(income, expenses, debts, subscriptions, goals);
+  const summary = computeFinancialSummary(
+    income,
+    expenses,
+    debts,
+    subscriptions,
+    goals,
+  );
+  const dataHash = computeDataHash(
+    income,
+    expenses,
+    debts,
+    subscriptions,
+    goals,
+  );
 
   // ── Cache lookup (authenticated users only) ──────────────────────────────────
   if (user && !forceRefresh) {
-    const cutoff = new Date(Date.now() - CACHE_TTL_HOURS * 60 * 60 * 1000).toISOString();
+    const cutoff = new Date(
+      Date.now() - CACHE_TTL_HOURS * 60 * 60 * 1000,
+    ).toISOString();
 
     const { data: cached } = await supabase
       .from("ai_insights")
@@ -87,7 +142,15 @@ export async function POST(request: Request) {
   }
 
   // ── Cache miss → call Claude ─────────────────────────────────────────────────
-  const prompt = buildInsightsPrompt({ summary, income, expenses, debts, subscriptions, goals, userName });
+  const prompt = buildInsightsPrompt({
+    summary,
+    income,
+    expenses,
+    debts,
+    subscriptions,
+    goals,
+    userName,
+  });
 
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
@@ -95,13 +158,23 @@ export async function POST(request: Request) {
     messages: [{ role: "user", content: prompt }],
   });
 
-  const text = message.content[0].type === "text" ? message.content[0].text : "[]";
+  const text =
+    message.content[0].type === "text" ? message.content[0].text : "[]";
 
-  let rawInsights: { type: string; title: string; body: string; impact: string; icon: string }[];
+  let rawInsights: {
+    type: string;
+    title: string;
+    body: string;
+    impact: string;
+    icon: string;
+  }[];
   try {
     rawInsights = JSON.parse(text);
   } catch {
-    return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to parse AI response" },
+      { status: 500 },
+    );
   }
 
   const now = new Date().toISOString();
@@ -112,10 +185,14 @@ export async function POST(request: Request) {
     await supabase.from("ai_insights").insert(
       rawInsights.map((ins) => ({
         user_id: user.id,
-        type: ins.type, title: ins.title, body: ins.body,
-        impact: ins.impact, icon: ins.icon, is_read: false,
+        type: ins.type,
+        title: ins.title,
+        body: ins.body,
+        impact: ins.impact,
+        icon: ins.icon,
+        is_read: false,
         data_hash: dataHash,
-      }))
+      })),
     );
   }
 
@@ -123,9 +200,11 @@ export async function POST(request: Request) {
     id: `insight-${Date.now()}-${i}`,
     user_id: user?.id ?? "guest",
     type: ins.type as AIInsight["type"],
-    title: ins.title, body: ins.body,
+    title: ins.title,
+    body: ins.body,
     impact: ins.impact as AIInsight["impact"],
-    icon: ins.icon, is_read: false,
+    icon: ins.icon,
+    is_read: false,
     generated_at: now,
   }));
 

@@ -51,14 +51,19 @@ const supabase = createClient();
 **Critical rule**: Never use the browser client in Server Actions or Route Handlers. Never use the server client in Client Components.
 
 ### Server Action Pattern
+
 ```ts
 "use server";
 import { createClient } from "@/lib/supabase/server";
 
-export async function addDebt(data: AddDebtData): Promise<{ error: string } | { success: true }> {
+export async function addDebt(
+  data: AddDebtData,
+): Promise<{ error: string } | { success: true }> {
   const supabase = await createClient();
-  
-  const { data: { user } } = await supabase.auth.getUser();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
 
   const { error } = await supabase
@@ -71,14 +76,17 @@ export async function addDebt(data: AddDebtData): Promise<{ error: string } | { 
 ```
 
 ### Route Handler Pattern
+
 ```ts
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   if (!user) {
     return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   }
@@ -88,7 +96,9 @@ export async function POST(request: NextRequest) {
 ```
 
 ### Row Level Security (RLS) Rules
+
 Every table that stores user data must have:
+
 ```sql
 -- Enable RLS
 ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
@@ -97,7 +107,7 @@ ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own data" ON table_name
   FOR SELECT USING (auth.uid() = user_id);
 
--- Insert: users can only insert their own data  
+-- Insert: users can only insert their own data
 CREATE POLICY "Users can insert own data" ON table_name
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
@@ -115,6 +125,7 @@ CREATE POLICY "Users can delete own data" ON table_name
 ### Auth Flow Reference
 
 #### Email/Password
+
 ```
 signUp → supabase.auth.signUp() → returns { data, error }
   - if data.session is null → email confirmation required → return requiresEmailConfirmation: true
@@ -123,11 +134,12 @@ signUp → supabase.auth.signUp() → returns { data, error }
 
 signIn → supabase.auth.signInWithPassword() → returns { data, error }
   - client handles redirect (not server action) → router.push("/dashboard") + router.refresh()
-  
+
 signOut → supabase.auth.signOut() → redirect("/login") (server action)
 ```
 
 #### Google OAuth
+
 ```
 Client → supabase.auth.signInWithOAuth({ provider: "google" })
 Browser redirects to Google → user authenticates → Google redirects to Supabase
@@ -137,6 +149,7 @@ Redirect to /dashboard
 ```
 
 ### Migration Conventions
+
 - Migrations live in `supabase/migrations/`
 - Filename format: `NNN_descriptive_name.sql` (e.g., `002_add_net_worth_tracking.sql`)
 - Always include `-- rollback:` comments
@@ -148,19 +161,25 @@ Redirect to /dashboard
 ## Security Standards
 
 ### Input Validation
+
 All Server Actions must validate input before database operations:
+
 ```ts
-if (!data.name || data.name.trim().length === 0) return { error: "Name is required" };
+if (!data.name || data.name.trim().length === 0)
+  return { error: "Name is required" };
 if (data.amount <= 0) return { error: "Amount must be positive" };
-if (data.amount > 10_000_000) return { error: "Amount seems unrealistically large" };
+if (data.amount > 10_000_000)
+  return { error: "Amount seems unrealistically large" };
 ```
 
 ### Sensitive Data
+
 - `ANTHROPIC_API_KEY` — server-only, never in client code
 - Supabase anon key — safe for client (RLS enforced)
 - Service role key — NEVER use in this app; anon key with RLS is sufficient
 
 ### OWASP Relevant Concerns
+
 - **Injection**: Supabase parameterised queries prevent SQL injection — never use raw SQL with user input
 - **Auth**: Always verify `supabase.auth.getUser()` before operations, never trust client-passed user IDs
 - **CSRF**: Server Actions have built-in CSRF protection in Next.js

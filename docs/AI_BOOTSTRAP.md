@@ -13,32 +13,36 @@ This file eliminates the most common source of wasted context in AI-assisted dev
 ## Session Initialisation Protocol
 
 ### Step 1: Load This File First
+
 Any Claude session working on INSYT. should begin by reading `docs/AI_BOOTSTRAP.md` (this file). It tells you which other docs to load based on the task type.
 
 ### Step 2: Identify Task Type
+
 Use the task matrix below to determine which docs and agents to load.
 
 ### Step 3: Load Relevant Docs + Agent
+
 Load only the docs relevant to your task — not all docs. Fewer, more targeted docs = better-quality responses.
 
 ### Step 4: Check Live Code State
-Before making changes, read the relevant source files. The docs describe the *intended* state; the source files reveal the *actual* state.
+
+Before making changes, read the relevant source files. The docs describe the _intended_ state; the source files reveal the _actual_ state.
 
 ---
 
 ## Task → Doc + Agent Matrix
 
-| Task type | Docs to load | Agent to use |
-|---|---|---|
-| UI/visual changes, new components | `DESIGN_SYSTEM.md`, `ANIMATION_GUIDELINES.md` | `ui-ux-agent.md` |
-| New features, user flows, empty states | `UX_PRINCIPLES.md`, `PRODUCT.md` | `product-agent.md` + `ui-ux-agent.md` |
-| React components, shadcn, responsiveness | `DESIGN_SYSTEM.md`, `ARCHITECTURE.md` | `frontend-agent.md` |
-| Supabase, auth, database, APIs | `ARCHITECTURE.md` | `backend-agent.md` |
-| Financial calculations, AI coach, insights | `FINANCE_LOGIC.md` | `finance-agent.md` |
-| Folder structure, patterns, refactoring | `ARCHITECTURE.md` | `architecture-agent.md` |
-| Branding, copy, tone, naming | `BRAND_GUIDELINES.md` | `product-agent.md` |
-| Animations, motion, interactions | `ANIMATION_GUIDELINES.md` | `ui-ux-agent.md` |
-| Full feature (end-to-end) | All relevant docs | Multiple agents (see collaboration rules) |
+| Task type                                  | Docs to load                                  | Agent to use                              |
+| ------------------------------------------ | --------------------------------------------- | ----------------------------------------- |
+| UI/visual changes, new components          | `DESIGN_SYSTEM.md`, `ANIMATION_GUIDELINES.md` | `ui-ux-agent.md`                          |
+| New features, user flows, empty states     | `UX_PRINCIPLES.md`, `PRODUCT.md`              | `product-agent.md` + `ui-ux-agent.md`     |
+| React components, shadcn, responsiveness   | `DESIGN_SYSTEM.md`, `ARCHITECTURE.md`         | `frontend-agent.md`                       |
+| Supabase, auth, database, APIs             | `ARCHITECTURE.md`                             | `backend-agent.md`                        |
+| Financial calculations, AI coach, insights | `FINANCE_LOGIC.md`                            | `finance-agent.md`                        |
+| Folder structure, patterns, refactoring    | `ARCHITECTURE.md`                             | `architecture-agent.md`                   |
+| Branding, copy, tone, naming               | `BRAND_GUIDELINES.md`                         | `product-agent.md`                        |
+| Animations, motion, interactions           | `ANIMATION_GUIDELINES.md`                     | `ui-ux-agent.md`                          |
+| Full feature (end-to-end)                  | All relevant docs                             | Multiple agents (see collaboration rules) |
 
 ---
 
@@ -128,22 +132,26 @@ Key paths:
 ## Consistency Rules for Claude Sessions
 
 ### Design Consistency
+
 - Always check `globals.css` before creating new colour usage — use existing tokens
 - Always check `DESIGN_SYSTEM.md` before picking a new border radius or spacing value
 - Always use the `glass-card` class for surface cards — never invent new card styles
 
 ### Code Consistency
+
 - Always check `lib/types.ts` before defining a new type
 - Always check `lib/store/finance-store.tsx` before adding state elsewhere
 - Always use `cn()` from `lib/utils.ts` for conditional Tailwind classes
 - Always check existing component patterns before creating new ones
 
 ### Animation Consistency
+
 - Check `ANIMATION_GUIDELINES.md` timing table before using any duration
 - Use the defined easing values — never arbitrary cubic-beziers
 - Page transitions are handled by `PageTransition` — don't re-implement
 
 ### Financial Logic Consistency
+
 - All financial calculations must be documented in `FINANCE_LOGIC.md`
 - Any new Smart Alert trigger must be added to the alerts table in that doc
 - AI prompts must follow the tone guidelines in `BRAND_GUIDELINES.md`
@@ -168,6 +176,7 @@ When significant new patterns, decisions, or components are established:
 ## Recommended Session Prompt Templates
 
 ### UI Task Prompt
+
 ```
 I'm working on INSYT. — an AI personal finance coaching app.
 Read docs/DESIGN_SYSTEM.md and docs/ANIMATION_GUIDELINES.md before proceeding.
@@ -176,6 +185,7 @@ Task: [describe the UI change]
 ```
 
 ### Feature Task Prompt
+
 ```
 I'm working on INSYT. — an AI personal finance coaching app.
 Read docs/PRODUCT.md, docs/ARCHITECTURE.md, and agents/[relevant-agent].md before proceeding.
@@ -183,6 +193,7 @@ Task: [describe the feature]
 ```
 
 ### Bug Fix Prompt
+
 ```
 I'm working on INSYT. — an AI personal finance coaching app.
 Read docs/ARCHITECTURE.md before proceeding.
@@ -196,22 +207,22 @@ Relevant files: [list files]
 
 Quick reference for decisions already made (so they don't get re-debated):
 
-| Decision | Rationale |
-|---|---|
-| Guest mode via localStorage | Value before commitment — reduce signup friction |
-| No named AI persona | Avoids anthropomorphism; INSYT. speaks as the product |
-| Framer Motion for animations | Best-in-class DX, excellent TypeScript support |
-| Material Symbols for icons | Variable weight, huge library, Google CDN |
-| Manrope typeface | Premium feel, geometric, excellent legibility |
-| Teal as brand colour | Calm, intelligent, financial trust — not generic blue |
-| CSS transitions for sidebar | Better perf than Framer Motion for persistent nav |
-| Server Actions for mutations | Simpler than API routes; automatic CSRF protection |
-| RLS on all Supabase tables | Security-first; never bypass, never pass user_id from client |
-| claude-sonnet-4-6 model | Best quality/cost balance for financial coaching |
-| Single FinanceStore context | Simpler than Redux/Zustand for this data size |
-| No shadcn component library (full) | Custom components for better design control |
-| PWA via @ducanh2912/next-pwa | Maintained Next.js 15 fork; Workbox-based SW generation |
-| SW disabled in dev | Prevents stale-cache confusion during active development |
-| BottomNav on mobile | Native app pattern for <5 primary routes; sidebar for secondary |
-| SW NetworkOnly for AI chat | Streaming responses cannot be cached — skip entirely |
-| SW NetworkFirst for insights | Aligns with 24h data_hash cache TTL; offline shows stale OK |
+| Decision                           | Rationale                                                       |
+| ---------------------------------- | --------------------------------------------------------------- |
+| Guest mode via localStorage        | Value before commitment — reduce signup friction                |
+| No named AI persona                | Avoids anthropomorphism; INSYT. speaks as the product           |
+| Framer Motion for animations       | Best-in-class DX, excellent TypeScript support                  |
+| Material Symbols for icons         | Variable weight, huge library, Google CDN                       |
+| Manrope typeface                   | Premium feel, geometric, excellent legibility                   |
+| Teal as brand colour               | Calm, intelligent, financial trust — not generic blue           |
+| CSS transitions for sidebar        | Better perf than Framer Motion for persistent nav               |
+| Server Actions for mutations       | Simpler than API routes; automatic CSRF protection              |
+| RLS on all Supabase tables         | Security-first; never bypass, never pass user_id from client    |
+| claude-sonnet-4-6 model            | Best quality/cost balance for financial coaching                |
+| Single FinanceStore context        | Simpler than Redux/Zustand for this data size                   |
+| No shadcn component library (full) | Custom components for better design control                     |
+| PWA via @ducanh2912/next-pwa       | Maintained Next.js 15 fork; Workbox-based SW generation         |
+| SW disabled in dev                 | Prevents stale-cache confusion during active development        |
+| BottomNav on mobile                | Native app pattern for <5 primary routes; sidebar for secondary |
+| SW NetworkOnly for AI chat         | Streaming responses cannot be cached — skip entirely            |
+| SW NetworkFirst for insights       | Aligns with 24h data_hash cache TTL; offline shows stale OK     |

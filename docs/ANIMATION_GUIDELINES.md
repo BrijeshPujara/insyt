@@ -23,47 +23,51 @@ Animation in INSYT. serves a single purpose: **making the interface feel more al
 ## Easing Functions
 
 ### Primary Easing
+
 ```ts
 // Used for most entrance/exit animations — mimics Apple's spring feel
-ease: [0.22, 1, 0.36, 1]   // Custom cubic-bezier "expressive"
+ease: [0.22, 1, 0.36, 1]; // Custom cubic-bezier "expressive"
 ```
 
 ### Spring (for interactive feedback)
+
 ```ts
 type: "spring", stiffness: 400, damping: 25   // Snappy, feels physical
 type: "spring", stiffness: 300, damping: 30   // Slightly softer
 ```
 
 ### Linear (for continuous animations only)
+
 ```ts
-ease: "linear"   // Progress bars, spinners — never for transitions
+ease: "linear"; // Progress bars, spinners — never for transitions
 ```
 
 ### Standard
+
 ```ts
-ease: "easeOut"      // Simple fade-ins
-ease: "easeInOut"    // Page-level transitions
+ease: "easeOut"; // Simple fade-ins
+ease: "easeInOut"; // Page-level transitions
 ```
 
 ---
 
 ## Timing Reference
 
-| Animation type | Duration | Notes |
-|---|---|---|
-| Page transition (exit) | 140ms | Fast — user shouldn't wait |
-| Page transition (enter) | 220ms | Slightly slower, feels intentional |
-| Element fade-in | 200–350ms | Longer for important elements |
-| Stagger child delay | 60–80ms | Between list items |
-| Hover state | 150–200ms | Instant feel |
-| Alert appear | 300ms | Slide + fade |
-| Alert dismiss | 200ms | Collapse height |
-| Toast enter | 300ms | Slide from right |
-| Toast exit | 200ms | Fade out |
-| Sidebar slide (mobile) | 300ms | CSS transition, not Framer |
-| Spinner | Infinite, 1s loop | Linear ease |
-| Number count-up | 800–1200ms | EaseOut |
-| Health ring draw | 1200ms | Spring |
+| Animation type          | Duration          | Notes                              |
+| ----------------------- | ----------------- | ---------------------------------- |
+| Page transition (exit)  | 140ms             | Fast — user shouldn't wait         |
+| Page transition (enter) | 220ms             | Slightly slower, feels intentional |
+| Element fade-in         | 200–350ms         | Longer for important elements      |
+| Stagger child delay     | 60–80ms           | Between list items                 |
+| Hover state             | 150–200ms         | Instant feel                       |
+| Alert appear            | 300ms             | Slide + fade                       |
+| Alert dismiss           | 200ms             | Collapse height                    |
+| Toast enter             | 300ms             | Slide from right                   |
+| Toast exit              | 200ms             | Fade out                           |
+| Sidebar slide (mobile)  | 300ms             | CSS transition, not Framer         |
+| Spinner                 | Infinite, 1s loop | Linear ease                        |
+| Number count-up         | 800–1200ms        | EaseOut                            |
+| Health ring draw        | 1200ms            | Spring                             |
 
 ---
 
@@ -83,6 +87,7 @@ transition: { duration: 0.14, ease: "easeIn" }
 ```
 
 **Rules:**
+
 - Y-axis displacement is always small (4–12px). Never large slide effects.
 - Exit is always faster than entrance.
 - Never animate X-axis on page transitions (too distracting).
@@ -124,12 +129,14 @@ const item = {
 ## Hover Behaviours
 
 ### Cards / Clickable surfaces
+
 ```tsx
 whileHover={{ y: -2, boxShadow: "..." }}
 transition={{ duration: 0.2 }}
 ```
 
 ### Icon buttons / small interactive elements
+
 ```tsx
 whileHover={{ scale: 1.08 }}
 whileTap={{ scale: 0.94 }}
@@ -137,16 +144,19 @@ transition={{ type: "spring", stiffness: 400, damping: 20 }}
 ```
 
 ### Brand logo icon
+
 ```tsx
 whileHover={{ scale: 1.08 }}
 transition={{ type: "spring", stiffness: 400, damping: 20 }}
 ```
 
 ### Sidebar nav items
+
 - CSS transitions only (`transition-all duration-150`)
 - No Framer Motion — keep sidebar rendering performant
 
 ### Buttons (primary/secondary)
+
 - CSS `active:scale-[0.98]` — defined in `.btn-primary` / `.btn-secondary` classes
 - No Framer `whileTap` needed for standard buttons
 
@@ -155,10 +165,12 @@ transition={{ type: "spring", stiffness: 400, damping: 20 }}
 ## Microinteractions
 
 ### Form Input Focus
-- CSS `focus:ring-2 focus:ring-primary/30 focus:border-primary` 
+
+- CSS `focus:ring-2 focus:ring-primary/30 focus:border-primary`
 - No Framer Motion needed
 
 ### Error Messages (form validation)
+
 ```tsx
 // Slide down + fade in
 initial: { opacity: 0, height: 0, y: -4 }
@@ -168,12 +180,14 @@ transition: { duration: 0.2 }
 ```
 
 ### Alert Dismiss (SmartAlerts)
+
 ```tsx
 exit: { opacity: 0, height: 0, marginBottom: 0 }
 transition: { duration: 0.25, ease: "easeInOut" }
 ```
 
 ### Toast notifications
+
 ```tsx
 // Enter from right
 initial: { opacity: 0, x: 60, scale: 0.95 }
@@ -183,10 +197,12 @@ transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
 ```
 
 ### Health Score Ring
+
 - SVG `strokeDashoffset` animated on mount
 - Duration 1.2s, spring easing
 
 ### Number counters (financial values)
+
 - Animate from 0 to actual value on first mount
 - Duration 800–1000ms, easeOut
 
@@ -195,16 +211,19 @@ transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
 ## Loading States
 
 ### Spinner (inline)
+
 ```tsx
 <span className="w-4 h-4 rounded-full border-2 border-border border-t-foreground animate-spin" />
 ```
 
 ### Skeleton screens
+
 - Use `animate-pulse` for skeleton loading states
 - Match the exact shape/size of the content they replace
 - Background: `bg-muted`
 
 ### Page-level loading
+
 - `PageTransition` handles this via route-level animation
 - Avoid full-page spinners — they feel slow
 
@@ -235,10 +254,15 @@ function MyComponent() {
 ```
 
 For CSS animations (sidebar, spinners):
+
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .animate-spin { animation: none; }
-  * { transition-duration: 0.01ms !important; }
+  .animate-spin {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
 }
 ```
 

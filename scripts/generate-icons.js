@@ -45,8 +45,12 @@ function drawIcon(size) {
 
   // ── Subtle inner glow ──────────────────────────────────────────────────
   const glow = ctx.createRadialGradient(
-    size * 0.35, size * 0.3, 0,
-    size * 0.35, size * 0.3, size * 0.6,
+    size * 0.35,
+    size * 0.3,
+    0,
+    size * 0.35,
+    size * 0.3,
+    size * 0.6,
   );
   glow.addColorStop(0, "rgba(0, 200, 210, 0.25)");
   glow.addColorStop(1, "rgba(0, 200, 210, 0)");

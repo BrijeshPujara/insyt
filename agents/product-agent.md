@@ -38,6 +38,7 @@ This agent is responsible for product decision-making: evaluating feature reques
 INSYT. is a **focused** product. It does fewer things than most financial apps, but does them significantly better. Every feature must earn its place by reducing financial anxiety or increasing financial clarity.
 
 ### The Feature Filter
+
 Before any feature is built, answer these 5 questions:
 
 1. **Who specifically benefits?** (Not "everyone" — name a real user scenario)
@@ -53,7 +54,9 @@ If any answer is unclear, the feature isn't ready to build.
 ## Feature Evaluation Framework
 
 ### Tier 1 — Core (always prioritise)
+
 Features that directly address the core user problems:
+
 - Understanding financial health (score, cashflow, DTI)
 - Managing debt intelligently (payoff plans, prioritisation)
 - Building savings habits (goals, progress)
@@ -61,7 +64,9 @@ Features that directly address the core user problems:
 - Tracking recurring commitments (expenses, subscriptions)
 
 ### Tier 2 — Valuable Extensions
+
 Features that extend the core experience meaningfully:
+
 - Monthly financial review / report generation
 - Net worth tracking over time
 - Debt payoff scenarios (avalanche vs snowball comparison)
@@ -69,7 +74,9 @@ Features that extend the core experience meaningfully:
 - Financial calendar (upcoming due dates)
 
 ### Tier 3 — Nice to Have (lower priority)
+
 Features that are useful but not core:
+
 - CSV import/export
 - Multiple currencies
 - Investment tracking (requires careful scope)
@@ -77,7 +84,9 @@ Features that are useful but not core:
 - Tax estimation
 
 ### Not INSYT. (never build)
+
 Features that conflict with the product identity:
+
 - Social/sharing features (finance is private)
 - Investment advice (regulatory risk)
 - Crypto tracking (out of brand)
@@ -90,12 +99,14 @@ Features that conflict with the product identity:
 ## Simplification Rules
 
 When evaluating a feature, always ask:
+
 - **Can this be done in one step instead of three?**
 - **Does the user need to understand this, or just the outcome?**
 - **Is there a way to make this automatic instead of manual?**
 - **Does this require new navigation, or can it live in an existing page?**
 
 ### Example: Monthly Review
+
 - Complex version: dedicated page, date picker, custom report builder, export options
 - Simple version: a "Monthly Summary" section on Reports page, auto-generated for the previous month, one tap to generate
 - **Ship the simple version first. Add complexity only if users ask for it.**
@@ -106,12 +117,12 @@ When evaluating a feature, always ask:
 
 Rate potential features on this matrix:
 
-| Dimension | Low (1) | Medium (2) | High (3) |
-|---|---|---|---|
-| **Frequency** | Used < once/month | Used weekly | Used every session |
-| **Impact** | Interesting | Helpful | Directly reduces financial anxiety |
-| **Uniqueness** | Any app does this | Few apps do this | INSYT. does this uniquely well |
-| **Effort to understand** | Requires explanation | Obvious with label | Instantly understood |
+| Dimension                | Low (1)              | Medium (2)         | High (3)                           |
+| ------------------------ | -------------------- | ------------------ | ---------------------------------- |
+| **Frequency**            | Used < once/month    | Used weekly        | Used every session                 |
+| **Impact**               | Interesting          | Helpful            | Directly reduces financial anxiety |
+| **Uniqueness**           | Any app does this    | Few apps do this   | INSYT. does this uniquely well     |
+| **Effort to understand** | Requires explanation | Obvious with label | Instantly understood               |
 
 Score ≥ 9/12: Build now
 Score 6–8: Refine the concept first

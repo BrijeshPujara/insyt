@@ -36,31 +36,44 @@ This agent is responsible for all financial logic, calculation correctness, AI c
 ## Financial Calculation Standards
 
 ### Frequency Normalisation (always use this)
+
 ```ts
 function toMonthly(amount: number, frequency: Frequency | "one_off"): number {
   switch (frequency) {
-    case "weekly":    return amount * 4.333;
-    case "biweekly":  return amount * 2.167;
-    case "monthly":   return amount;
-    case "annually":  return amount / 12;
-    case "one_off":   return 0; // one-off costs don't count in monthly recurring
+    case "weekly":
+      return amount * 4.333;
+    case "biweekly":
+      return amount * 2.167;
+    case "monthly":
+      return amount;
+    case "annually":
+      return amount / 12;
+    case "one_off":
+      return 0; // one-off costs don't count in monthly recurring
   }
 }
 ```
 
 ### Key Metrics
+
 ```ts
-const monthlyIncome = sum(income.map(i => toMonthly(i.amount, i.frequency)));
-const monthlyExpenses = sum(expenses.filter(e => e.is_active).map(e => toMonthly(e.amount, e.frequency)));
-const monthlyDebtPayments = sum(debts.map(d => d.minimum_payment));
+const monthlyIncome = sum(income.map((i) => toMonthly(i.amount, i.frequency)));
+const monthlyExpenses = sum(
+  expenses
+    .filter((e) => e.is_active)
+    .map((e) => toMonthly(e.amount, e.frequency)),
+);
+const monthlyDebtPayments = sum(debts.map((d) => d.minimum_payment));
 const monthlyCashflow = monthlyIncome - monthlyExpenses - monthlyDebtPayments;
 const savingsRate = monthlyCashflow / monthlyIncome;
 const dti = monthlyDebtPayments / monthlyIncome;
-const totalDebt = sum(debts.map(d => d.balance));
+const totalDebt = sum(debts.map((d) => d.balance));
 ```
 
 ### Health Score (0–100)
+
 See `docs/FINANCE_LOGIC.md` for full scoring algorithm. Quick reference:
+
 - Cashflow ratio: 25pts (surplus ≥ 20% income = full)
 - DTI: 25pts (< 15% = full, > 50% = 0)
 - Savings rate: 20pts (≥ 20% = full)
@@ -68,18 +81,24 @@ See `docs/FINANCE_LOGIC.md` for full scoring algorithm. Quick reference:
 - High-interest debt: 15pts (0% high-APR debt = full)
 
 ### Debt Payoff Simulation (with interest)
+
 ```ts
-function monthsToPayoff(balance: number, apr: number, monthlyPayment: number): number {
+function monthsToPayoff(
+  balance: number,
+  apr: number,
+  monthlyPayment: number,
+): number {
   let remaining = balance;
   const monthlyRate = apr / 100 / 12;
   let months = 0;
-  
-  while (remaining > 0 && months < 600) { // 600 = 50 year safety cap
+
+  while (remaining > 0 && months < 600) {
+    // 600 = 50 year safety cap
     remaining = remaining * (1 + monthlyRate) - monthlyPayment;
     months++;
     if (monthlyPayment <= remaining * monthlyRate) return Infinity; // never pays off
   }
-  
+
   return months;
 }
 ```
@@ -89,14 +108,18 @@ function monthsToPayoff(balance: number, apr: number, monthlyPayment: number): n
 ## AI Prompt Engineering Standards
 
 ### System Prompt Requirements
+
 The system prompt for the AI coach must include:
+
 1. The INSYT. persona (calm, knowledgeable, non-judgemental UK financial coach)
 2. The user's complete financial context (income, expenses, debts, goals, cashflow, DTI, savings rate)
 3. Explicit tone instructions
 4. What the AI should and should not recommend
 
 ### Insight Quality Checklist
+
 Every AI insight must pass:
+
 - [ ] References the user's actual data (not generic)
 - [ ] Suggests one specific, concrete action
 - [ ] Is 2–4 sentences maximum
@@ -106,18 +129,20 @@ Every AI insight must pass:
 - [ ] Does not repeat another insight on the same page
 
 ### Insight Categories
+
 ```ts
-type InsightType = 
-  | "cashflow"        // Relates to income/expense balance
-  | "debt"            // Debt management and payoff
-  | "savings"         // Savings rate and goals
-  | "subscription"    // Subscription audit
-  | "budgeting"       // Category spending patterns
-  | "milestone"       // Positive progress moment
-  | "forecast"        // Projection based on current trajectory
+type InsightType =
+  | "cashflow" // Relates to income/expense balance
+  | "debt" // Debt management and payoff
+  | "savings" // Savings rate and goals
+  | "subscription" // Subscription audit
+  | "budgeting" // Category spending patterns
+  | "milestone" // Positive progress moment
+  | "forecast"; // Projection based on current trajectory
 ```
 
 ### AI Response Format (structured insights)
+
 ```json
 [
   {
@@ -148,7 +173,7 @@ function computeAlerts(ctx: FinancialContext): SmartAlert[] {
   }
 
   // Danger: high DTI
-  if (ctx.dti > 0.40) {
+  if (ctx.dti > 0.4) {
     alerts.push({
       level: "danger",
       title: "High debt-to-income ratio",
@@ -157,7 +182,7 @@ function computeAlerts(ctx: FinancialContext): SmartAlert[] {
   }
 
   // Warning: high APR debt
-  const highAprDebt = ctx.debts.find(d => d.interest_rate > 18);
+  const highAprDebt = ctx.debts.find((d) => d.interest_rate > 18);
   if (highAprDebt) {
     alerts.push({
       level: "warning",
@@ -167,12 +192,15 @@ function computeAlerts(ctx: FinancialContext): SmartAlert[] {
   }
 
   // Warning: subscriptions > 15% income
-  const subTotal = ctx.subscriptions.reduce((sum, s) => sum + toMonthly(s.amount, s.frequency), 0);
+  const subTotal = ctx.subscriptions.reduce(
+    (sum, s) => sum + toMonthly(s.amount, s.frequency),
+    0,
+  );
   if (subTotal > ctx.monthlyIncome * 0.15) {
     alerts.push({
       level: "warning",
       title: "Subscriptions are high",
-      description: `You're spending £${subTotal.toFixed(0)}/month on subscriptions — ${((subTotal/ctx.monthlyIncome)*100).toFixed(0)}% of your income.`,
+      description: `You're spending £${subTotal.toFixed(0)}/month on subscriptions — ${((subTotal / ctx.monthlyIncome) * 100).toFixed(0)}% of your income.`,
     });
   }
 
@@ -185,6 +213,7 @@ function computeAlerts(ctx: FinancialContext): SmartAlert[] {
 ## UK Financial Context Rules
 
 This agent must maintain UK-specific context:
+
 - Currency: always £ (GBP), never $
 - Student loans: income-contingent repayment — lower priority than commercial debt
 - ISA allowance: mention ISA for savings (£20,000/year tax-free wrapper)

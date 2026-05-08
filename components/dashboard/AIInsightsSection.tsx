@@ -6,7 +6,15 @@ import { useFinances } from "@/lib/store/finance-store";
 import type { AIInsight } from "@/lib/types";
 
 export function AIInsightsSection() {
-  const { income, expenses, debts, subscriptions, goals, setInsights, isGuest } = useFinances();
+  const {
+    income,
+    expenses,
+    debts,
+    subscriptions,
+    goals,
+    setInsights,
+    isGuest,
+  } = useFinances();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generated, setGenerated] = useState(false);
@@ -18,7 +26,14 @@ export function AIInsightsSection() {
     setError(null);
     try {
       const body = isGuest
-        ? JSON.stringify({ income, expenses, debts, subscriptions, goals, force: true })
+        ? JSON.stringify({
+            income,
+            expenses,
+            debts,
+            subscriptions,
+            goals,
+            force: true,
+          })
         : JSON.stringify({ force: true });
 
       const res = await fetch("/api/ai/insights", {
@@ -29,7 +44,9 @@ export function AIInsightsSection() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error ?? "Failed to generate insights");
+        throw new Error(
+          (data as { error?: string }).error ?? "Failed to generate insights",
+        );
       }
 
       const data = await res.json();
@@ -57,7 +74,11 @@ export function AIInsightsSection() {
         <motion.div
           className="w-11 h-11 rounded-xl bg-primary/12 flex items-center justify-center shrink-0 border border-primary/20"
           animate={{ scale: loading ? [1, 1.05, 1] : 1 }}
-          transition={{ duration: 1.5, repeat: loading ? Infinity : 0, ease: "easeInOut" }}
+          transition={{
+            duration: 1.5,
+            repeat: loading ? Infinity : 0,
+            ease: "easeInOut",
+          }}
         >
           <span
             className="material-symbols-outlined text-primary text-[20px]"
@@ -97,7 +118,8 @@ export function AIInsightsSection() {
           whileTap={!loading && hasData ? { scale: 0.97 } : {}}
           className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
-            boxShadow: "0 2px 8px var(--glow-primary), inset 0 1px 0 rgba(255,255,255,0.18)",
+            boxShadow:
+              "0 2px 8px var(--glow-primary), inset 0 1px 0 rgba(255,255,255,0.18)",
           }}
         >
           <AnimatePresence mode="wait" initial={false}>
@@ -112,7 +134,11 @@ export function AIInsightsSection() {
                 <motion.span
                   className="w-3.5 h-3.5 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground"
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                  transition={{
+                    duration: 0.8,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
                 />
                 Analysing…
               </motion.span>
@@ -124,7 +150,9 @@ export function AIInsightsSection() {
                 exit={{ opacity: 0 }}
                 className="flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-[16px]">auto_awesome</span>
+                <span className="material-symbols-outlined text-[16px]">
+                  auto_awesome
+                </span>
                 {generated ? "Regenerate" : "Generate"}
               </motion.span>
             )}

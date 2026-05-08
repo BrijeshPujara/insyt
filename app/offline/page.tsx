@@ -16,9 +16,12 @@ export default function OfflinePage() {
           <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-1">
             INSYT.
           </p>
-          <h1 className="text-xl font-bold text-foreground">You&apos;re offline</h1>
+          <h1 className="text-xl font-bold text-foreground">
+            You&apos;re offline
+          </h1>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-            No internet connection. Previously visited pages are still available — check your connection and try again.
+            No internet connection. Previously visited pages are still available
+            — check your connection and try again.
           </p>
         </div>
 

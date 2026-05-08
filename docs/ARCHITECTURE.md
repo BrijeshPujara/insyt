@@ -66,27 +66,30 @@ lumina-finance/
 ## App Router Architecture
 
 ### Route Groups
+
 - `(auth)` — pages without the sidebar (login, signup). Has its own layout with split-panel design.
 - `(main)` — authenticated pages with sidebar. `layout.tsx` renders `MainLayoutClient` which manages mobile sidebar state.
 
 ### Server vs Client Components
 
 **Default to Server Components.** Only opt into `"use client"` when you need:
+
 - Browser APIs (`localStorage`, `window`, `document`)
 - React hooks (`useState`, `useEffect`, `useContext`)
 - Event handlers
 - Framer Motion animations
 
-| File | Boundary |
-|---|---|
+| File                            | Boundary                      |
+| ------------------------------- | ----------------------------- |
 | `app/(main)/dashboard/page.tsx` | Server (fetches initial data) |
-| `components/dashboard/*.tsx` | Client (animations, state) |
-| `app/actions/auth.ts` | Server Action |
-| `components/auth/LoginForm.tsx` | Client |
-| `lib/store/finance-store.tsx` | Client (Context) |
-| `app/api/ai/chat/route.ts` | Server (Route Handler) |
+| `components/dashboard/*.tsx`    | Client (animations, state)    |
+| `app/actions/auth.ts`           | Server Action                 |
+| `components/auth/LoginForm.tsx` | Client                        |
+| `lib/store/finance-store.tsx`   | Client (Context)              |
+| `app/api/ai/chat/route.ts`      | Server (Route Handler)        |
 
 ### Data Fetching Strategy
+
 1. Server Components fetch via Supabase server client for initial page data
 2. Client Components use `FinanceStore` (which internally uses Supabase browser client)
 3. AI routes are Route Handlers (streaming responses)
@@ -97,15 +100,18 @@ lumina-finance/
 ## State Management
 
 ### FinanceStore (`lib/store/finance-store.tsx`)
+
 Single global Context Provider that manages all financial data.
 
 **Architecture:**
+
 - Detects authenticated user vs guest on mount (`supabase.auth.getUser()`)
 - Guest mode: reads/writes to `localStorage` key `lumina_finance_v1`
 - Authenticated mode: CRUD operations against Supabase tables with RLS
 - Migration: on user sign-in, local guest data is auto-migrated to Supabase
 
 **Exposed state:**
+
 ```ts
 user: User | null
 isGuest: boolean
@@ -119,6 +125,7 @@ isLoading: boolean
 ```
 
 **Exposed methods:**
+
 ```ts
 addIncome(data: AddIncomeData): Promise<void>
 addExpense(data: AddExpenseData): Promise<void>
@@ -135,6 +142,7 @@ refreshInsights(): Promise<void>
 ```
 
 **Usage:**
+
 ```tsx
 const { income, addIncome, isGuest } = useFinances();
 ```
@@ -144,10 +152,12 @@ const { income, addIncome, isGuest } = useFinances();
 ## Supabase Integration
 
 ### Client Types
+
 - **Browser client** (`lib/supabase/client.ts`): Used in Client Components. Singleton via module-level variable. Uses `createBrowserClient`.
 - **Server client** (`lib/supabase/server.ts`): Used in Server Components, Server Actions, Route Handlers. Uses `createServerClient` with Next.js cookie adapter.
 
 ### Auth Flow
+
 1. Email/password: Server Action → `supabase.auth.signUp` / `signInWithPassword`
 2. Google OAuth: Client → `supabase.auth.signInWithOAuth` → redirect to Google → Supabase callback → `/api/auth/callback` → `supabase.auth.exchangeCodeForSession` → redirect to `/dashboard`
 3. Middleware (`middleware.ts`) protects all `(main)` routes — redirects to `/login` if no session
@@ -160,44 +170,51 @@ const { income, addIncome, isGuest } = useFinances();
 INSYT. is a fully installable PWA powered by `@ducanh2912/next-pwa` (Workbox-based).
 
 ### Service Worker
+
 - Generated at build time into `public/sw.js`
 - **Disabled in development** (`NODE_ENV === "development"`) — prevents stale cache during active development
 - Activated only on `npm run build` + `npm start` (production)
 - Configured in `next.config.ts` via `workboxOptions.runtimeCaching`
 
 ### Caching Strategy
-| Route | Strategy | TTL |
-|---|---|---|
-| Google Fonts stylesheets | CacheFirst | 365 days |
-| Google Fonts webfonts | CacheFirst | 365 days |
-| `/api/ai/insights` | NetworkFirst | 24h |
-| `/api/ai/chat` | NetworkOnly | never (streaming) |
-| Other `/api/*` | NetworkFirst | 60s |
-| Next.js static assets | CacheFirst (auto) | — |
+
+| Route                    | Strategy          | TTL               |
+| ------------------------ | ----------------- | ----------------- |
+| Google Fonts stylesheets | CacheFirst        | 365 days          |
+| Google Fonts webfonts    | CacheFirst        | 365 days          |
+| `/api/ai/insights`       | NetworkFirst      | 24h               |
+| `/api/ai/chat`           | NetworkOnly       | never (streaming) |
+| Other `/api/*`           | NetworkFirst      | 60s               |
+| Next.js static assets    | CacheFirst (auto) | —                 |
 
 ### Offline Fallback
+
 - `app/offline/page.tsx` — shown when a route is unvisited and network is unavailable
 - Guest users retain full app functionality offline (data in localStorage)
 - Authenticated users can view previously cached pages offline
 
 ### Mobile Navigation
+
 - **Desktop (≥1024px):** Fixed left sidebar (64px wide)
 - **Mobile (<1024px):** `BottomNav` component (`components/layout/BottomNav.tsx`) — fixed bottom tab bar with 5 items: Dashboard, Budgets, ➕ Add (centre), Debt, Advisory
 - Sidebar on mobile shows: Reports, Settings, Sign out, theme toggle (secondary actions)
 - `safe-area-inset-bottom` applied to BottomNav and body — handles iPhone home indicator / Dynamic Island
 
 ### Manifest
+
 - `public/manifest.json` — `display: standalone`, `theme_color: #006874`, 192 + 512 icons
 - Icons generated via `node scripts/generate-icons.js` (uses `canvas` package)
 - Re-run the script if the brand design changes
 
 ### Rebuilding Icons
+
 ```bash
 npm install  # canvas is a devDependency
 node scripts/generate-icons.js
 ```
 
 ### Build + Test PWA
+
 ```bash
 npm run build   # generates sw.js + workbox-*.js in public/
 npm start       # serve production build on :3000
@@ -205,7 +222,9 @@ npm start       # serve production build on :3000
 ```
 
 ### Database Schema
+
 Tables (all with RLS enabled, `user_id` FK to `auth.users`):
+
 - `profiles` — user preferences (currency, theme, full_name)
 - `income` — income sources
 - `expenses` — expense records
@@ -216,6 +235,7 @@ Tables (all with RLS enabled, `user_id` FK to `auth.users`):
 - `chat_messages` — conversation history
 
 ### Row Level Security (RLS)
+
 Every table has `user_id = auth.uid()` RLS policies. Never bypass RLS. Never pass `user_id` as a parameter from the client — always derive from `auth.uid()` on the server.
 
 ---
@@ -225,16 +245,19 @@ Every table has `user_id = auth.uid()` RLS policies. Never bypass RLS. Never pas
 ### Route Handlers (`app/api/`)
 
 #### `POST /api/ai/chat`
+
 - Accepts `{ messages: ChatMessage[], financialContext: FinancialContext }`
 - Streams Claude response using Anthropic SDK
 - Returns `text/event-stream`
 
 #### `POST /api/ai/insights`
+
 - Accepts `{ financialContext: FinancialContext }`
 - Returns 4 structured JSON insights
 - Model: `claude-sonnet-4-6`
 
 #### `GET /api/auth/callback`
+
 - Accepts `?code=` from OAuth redirect
 - Exchanges code for session via `supabase.auth.exchangeCodeForSession`
 - Redirects to `/dashboard` (success) or `/login?error=auth_callback_failed` (failure)
@@ -243,16 +266,17 @@ Every table has `user_id = auth.uid()` RLS policies. Never bypass RLS. Never pas
 
 ## Server Actions (`app/actions/`)
 
-| File | Actions |
-|---|---|
-| `auth.ts` | `signIn`, `signUp`, `signOut` |
-| `expenses.ts` | `addExpense`, `deleteExpense` |
-| `income.ts` | `addIncome`, `deleteIncome` |
-| `debts.ts` | `addDebt`, `deleteDebt` |
+| File               | Actions                                 |
+| ------------------ | --------------------------------------- |
+| `auth.ts`          | `signIn`, `signUp`, `signOut`           |
+| `expenses.ts`      | `addExpense`, `deleteExpense`           |
+| `income.ts`        | `addIncome`, `deleteIncome`             |
+| `debts.ts`         | `addDebt`, `deleteDebt`                 |
 | `subscriptions.ts` | `addSubscription`, `deleteSubscription` |
-| `goals.ts` | `addGoal`, `updateGoal`, `deleteGoal` |
+| `goals.ts`         | `addGoal`, `updateGoal`, `deleteGoal`   |
 
 All Server Actions:
+
 - Use the server Supabase client
 - Validate input before database calls
 - Return typed result objects (not `void`) so clients can handle errors
@@ -263,24 +287,26 @@ All Server Actions:
 ## AI Integration
 
 ### Anthropic Client (`lib/anthropic.ts`)
+
 - Model: `claude-sonnet-4-6`
 - System prompt: `buildSystemPrompt(context)` — financial coach persona with full user data context
 - Insights prompt: `buildInsightsPrompt(context)` — requests 4 structured JSON insights
 
 ### Financial Context Shape
+
 ```ts
 type FinancialContext = {
-  totalMonthlyIncome: number
-  totalMonthlyExpenses: number
-  totalDebt: number
-  monthlyCashflow: number
-  debtToIncomeRatio: number
-  savingsRate: number
-  debts: Debt[]
-  goals: SavingsGoal[]
-  subscriptions: Subscription[]
-  topExpenseCategories: { category: string; amount: number }[]
-}
+  totalMonthlyIncome: number;
+  totalMonthlyExpenses: number;
+  totalDebt: number;
+  monthlyCashflow: number;
+  debtToIncomeRatio: number;
+  savingsRate: number;
+  debts: Debt[];
+  goals: SavingsGoal[];
+  subscriptions: Subscription[];
+  topExpenseCategories: { category: string; amount: number }[];
+};
 ```
 
 ---
@@ -288,6 +314,7 @@ type FinancialContext = {
 ## Naming Conventions
 
 ### Files
+
 - **Components**: `PascalCase.tsx` (e.g., `SmartAlerts.tsx`)
 - **Pages**: `page.tsx` (Next.js convention)
 - **Layouts**: `layout.tsx`
@@ -296,11 +323,13 @@ type FinancialContext = {
 - **Utilities**: `camelCase.ts`
 
 ### Variables
+
 - **Boolean state**: `isLoading`, `hasData`, `isGuest`
 - **Event handlers**: `handleSubmit`, `handleDelete`, `handleSignOut`
 - **Async actions**: `addIncome`, `deleteExpense` (verb + noun)
 
 ### CSS Classes
+
 - Utility classes: kebab-case (`.glass-card`, `.btn-primary`, `.input-field`)
 - Component-scoped: Tailwind classes inline, no CSS modules
 
@@ -320,11 +349,11 @@ type FinancialContext = {
 
 ## Environment Variables
 
-| Variable | Where used |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Client + Server |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Client + Server |
-| `ANTHROPIC_API_KEY` | Server only (AI routes) |
-| `NEXT_PUBLIC_SITE_URL` | OAuth redirect construction |
+| Variable                        | Where used                  |
+| ------------------------------- | --------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Client + Server             |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Client + Server             |
+| `ANTHROPIC_API_KEY`             | Server only (AI routes)     |
+| `NEXT_PUBLIC_SITE_URL`          | OAuth redirect construction |
 
 **Never** access `ANTHROPIC_API_KEY` from Client Components. It's server-only.

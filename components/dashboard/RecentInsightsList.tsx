@@ -10,9 +10,9 @@ interface Props {
 }
 
 const impactConfig = {
-  high:   { classes: "text-red-400 bg-red-400/10",     label: "HIGH"   },
+  high: { classes: "text-red-400 bg-red-400/10", label: "HIGH" },
   medium: { classes: "text-amber-400 bg-amber-400/10", label: "MEDIUM" },
-  low:    { classes: "text-emerald-400 bg-emerald-400/10", label: "LOW" },
+  low: { classes: "text-emerald-400 bg-emerald-400/10", label: "LOW" },
 } as const;
 
 const listVariants = {
@@ -23,7 +23,9 @@ const listVariants = {
 const rowVariants = {
   hidden: { opacity: 0, x: -14, scale: 0.97 },
   show: {
-    opacity: 1, x: 0, scale: 1,
+    opacity: 1,
+    x: 0,
+    scale: 1,
     transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
   },
 };
@@ -31,13 +33,28 @@ const rowVariants = {
 export function RecentInsightsList({ insights }: Props) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const { setInsights, income, expenses, debts, subscriptions, goals, isGuest } = useFinances();
+  const {
+    setInsights,
+    income,
+    expenses,
+    debts,
+    subscriptions,
+    goals,
+    isGuest,
+  } = useFinances();
 
   async function handleRefresh() {
     setRefreshing(true);
     try {
       const body = isGuest
-        ? JSON.stringify({ income, expenses, debts, subscriptions, goals, force: true })
+        ? JSON.stringify({
+            income,
+            expenses,
+            debts,
+            subscriptions,
+            goals,
+            force: true,
+          })
         : JSON.stringify({ force: true });
       const res = await fetch("/api/ai/insights", {
         method: "POST",
@@ -71,7 +88,9 @@ export function RecentInsightsList({ insights }: Props) {
           className="text-xs text-primary hover:underline flex items-center gap-0.5"
         >
           Full report
-          <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
+          <span className="material-symbols-outlined text-[12px]">
+            arrow_forward
+          </span>
         </motion.a>
         <motion.button
           onClick={handleRefresh}
@@ -86,7 +105,11 @@ export function RecentInsightsList({ insights }: Props) {
           <motion.span
             className="material-symbols-outlined text-[16px] block"
             animate={{ rotate: refreshing ? 360 : 0 }}
-            transition={refreshing ? { duration: 0.8, repeat: Infinity, ease: "linear" } : { duration: 0.3 }}
+            transition={
+              refreshing
+                ? { duration: 0.8, repeat: Infinity, ease: "linear" }
+                : { duration: 0.3 }
+            }
           >
             refresh
           </motion.span>
@@ -125,9 +148,13 @@ export function RecentInsightsList({ insights }: Props) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                  <p className="text-sm font-semibold text-foreground">{insight.title}</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {insight.title}
+                  </p>
                   {cfg && (
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wide ${cfg.classes}`}>
+                    <span
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wide ${cfg.classes}`}
+                    >
                       {cfg.label}
                     </span>
                   )}

@@ -292,19 +292,29 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       if (hasLocal) {
         await Promise.all([
           ...local.income.map((i) =>
-            supabase.from("income").insert({ ...i, id: undefined, user_id: uid }),
+            supabase
+              .from("income")
+              .insert({ ...i, id: undefined, user_id: uid }),
           ),
           ...local.expenses.map((e) =>
-            supabase.from("expenses").insert({ ...e, id: undefined, user_id: uid }),
+            supabase
+              .from("expenses")
+              .insert({ ...e, id: undefined, user_id: uid }),
           ),
           ...local.debts.map((d) =>
-            supabase.from("debts").insert({ ...d, id: undefined, user_id: uid }),
+            supabase
+              .from("debts")
+              .insert({ ...d, id: undefined, user_id: uid }),
           ),
           ...local.subscriptions.map((s) =>
-            supabase.from("subscriptions").insert({ ...s, id: undefined, user_id: uid }),
+            supabase
+              .from("subscriptions")
+              .insert({ ...s, id: undefined, user_id: uid }),
           ),
           ...local.goals.map((g) =>
-            supabase.from("savings_goals").insert({ ...g, id: undefined, user_id: uid }),
+            supabase
+              .from("savings_goals")
+              .insert({ ...g, id: undefined, user_id: uid }),
           ),
         ]);
       }

@@ -50,34 +50,37 @@ Layer 6: UI Primitives (design system building blocks)
 **Data only flows downward.** Pages consume the store. Components consume props. Never reach up.
 
 ### The Golden Rule
+
 > Put things where another developer would look for them.
 
 ---
 
 ## File Placement Rules
 
-| What you're creating | Where it goes |
-|---|---|
-| A page | `app/(main)/[route-name]/page.tsx` |
-| Auth page | `app/(auth)/[route-name]/page.tsx` |
-| Data mutation | `app/actions/[domain].ts` |
-| API endpoint | `app/api/[name]/route.ts` |
-| Shared component | `components/ui/[Name].tsx` |
-| Feature component | `components/[feature]/[Name].tsx` |
-| Layout component | `components/layout/[Name].tsx` |
-| Type definition | `lib/types.ts` |
-| Utility function | `lib/utils.ts` |
-| Custom hook | `lib/hooks/use-[name].ts` |
-| Constants | `lib/constants.ts` (create if needed) |
-| Financial calculation | `lib/finance.ts` (create if needed) |
-| Database migration | `supabase/migrations/NNN_description.sql` |
+| What you're creating  | Where it goes                             |
+| --------------------- | ----------------------------------------- |
+| A page                | `app/(main)/[route-name]/page.tsx`        |
+| Auth page             | `app/(auth)/[route-name]/page.tsx`        |
+| Data mutation         | `app/actions/[domain].ts`                 |
+| API endpoint          | `app/api/[name]/route.ts`                 |
+| Shared component      | `components/ui/[Name].tsx`                |
+| Feature component     | `components/[feature]/[Name].tsx`         |
+| Layout component      | `components/layout/[Name].tsx`            |
+| Type definition       | `lib/types.ts`                            |
+| Utility function      | `lib/utils.ts`                            |
+| Custom hook           | `lib/hooks/use-[name].ts`                 |
+| Constants             | `lib/constants.ts` (create if needed)     |
+| Financial calculation | `lib/finance.ts` (create if needed)       |
+| Database migration    | `supabase/migrations/NNN_description.sql` |
 
 ---
 
 ## Technical Standards
 
 ### Import Aliases
+
 Always use path aliases, never relative paths beyond one level:
+
 ```ts
 // ✅ Correct
 import { cn } from "@/lib/utils";
@@ -89,7 +92,9 @@ import { cn } from "../../lib/utils";
 ```
 
 ### Module Structure
+
 Each module should export a clear, minimal public API:
+
 ```ts
 // lib/finance.ts — exports only what consumers need
 export function toMonthly(amount: number, frequency: Frequency): number { ... }
@@ -100,15 +105,19 @@ function clamp(value: number, min: number, max: number): number { ... }
 ```
 
 ### Server Action Contract
+
 All Server Actions return a typed discriminated union:
+
 ```ts
-type ActionResult<T = void> = 
+type ActionResult<T = void> =
   | { error: string }
   | (T extends void ? { success: true } : { success: true; data: T });
 ```
 
 ### FinanceStore Extension Pattern
+
 When adding new data types to the store:
+
 1. Add the TypeScript type to `lib/types.ts`
 2. Add the DB table definition to `Database` type
 3. Add state to `FinanceStoreState` interface
@@ -123,21 +132,25 @@ When adding new data types to the store:
 ## Naming Conventions
 
 ### Components
+
 - `ComponentName` — describes what it renders, not what it does
 - `FeatureNameComponent` prefix only if disambiguation is needed
 - Page-specific: `DashboardPage`, but the file is `page.tsx`
 
 ### Hooks
+
 - `useFinances` — reads global financial state
 - `useToast` — toast notification system
 - `useFinancialSummary` — derived financial calculations (future hook)
 - Always start with `use`, always in `lib/hooks/`
 
 ### Server Actions
+
 - Verb + noun: `addIncome`, `deleteDebt`, `updateGoal`, `signIn`, `signOut`
 - Group by domain file, not by operation type
 
 ### Types
+
 - Domain models: `Income`, `Expense`, `Debt`, `SavingsGoal`
 - Input types: `AddIncomeData`, `UpdateGoalData`
 - Result types: `SignUpResult`, `ActionResult`
@@ -148,6 +161,7 @@ When adding new data types to the store:
 ## Anti-Patterns to Prevent
 
 ### Architectural
+
 - ❌ Business logic in React components — should be in `lib/` or store
 - ❌ Direct Supabase calls in Client Components — use the store or Server Actions
 - ❌ Prop drilling > 2 levels — use context or component composition
@@ -155,12 +169,14 @@ When adding new data types to the store:
 - ❌ Multiple sources of truth for the same state
 
 ### Structural
+
 - ❌ Creating a new utility file when `lib/utils.ts` would suffice
 - ❌ Types defined inline in component files
 - ❌ Import paths using `../..` (use `@/` aliases)
 - ❌ `index.ts` barrel files — import directly from source
 
 ### Consistency
+
 - ❌ Different error handling patterns in different Server Actions
 - ❌ Different loading state patterns in different components
 - ❌ Different form submission patterns across the app
@@ -171,6 +187,7 @@ When adding new data types to the store:
 ## When to Create New Abstractions
 
 Create a new shared utility/hook/component only when:
+
 1. The same logic appears in 3+ places (rule of three)
 2. The abstraction boundary is obvious and stable
 3. The abstraction is simpler to use than the raw implementation

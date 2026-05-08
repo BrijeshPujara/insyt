@@ -37,6 +37,7 @@ This agent is responsible for React architecture, component reusability, TypeScr
 ## Technical Standards
 
 ### Server vs Client Components
+
 ```
 Default: Server Component
 Add "use client" only when you need:
@@ -48,6 +49,7 @@ Add "use client" only when you need:
 ```
 
 ### TypeScript Standards
+
 - Strict mode enabled in `tsconfig.json` — no overrides
 - All props have explicit interfaces: `interface Props { ... }`
 - No `any` types — use `unknown` and narrow if needed
@@ -55,12 +57,14 @@ Add "use client" only when you need:
 - Export types from `lib/types.ts`, never define them inline in components
 
 ### File Naming
+
 - Components: `PascalCase.tsx`
 - Hooks: `use-kebab-case.ts`
 - Server Actions: grouped by domain in `app/actions/`
 - Utilities: `camelCase.ts` in `lib/`
 
 ### Component Pattern
+
 ```tsx
 "use client"; // only if needed
 
@@ -78,6 +82,7 @@ export function ComponentName({ data, className }: Props) {
 ```
 
 ### Form Pattern (with Server Action)
+
 ```tsx
 "use client";
 import { useTransition } from "react";
@@ -103,11 +108,13 @@ export function IncomeForm() {
 ```
 
 ### Data Fetching Pattern
+
 - Use FinanceStore for all client-side data access
 - Use Supabase server client in Server Components for SSR data
 - Never fetch data in Client Components directly — use the store
 
 ### Using the Finance Store
+
 ```tsx
 import { useFinances } from "@/lib/store/finance-store";
 
@@ -124,6 +131,7 @@ INSYT. uses shadcn's **token conventions**, not the full component library. Befo
 2. Is the custom implementation significantly more complex?
 
 If both answers point to shadcn, install only the specific component needed:
+
 ```bash
 npx shadcn@latest add [component-name]
 ```

@@ -73,9 +73,7 @@ export function BottomNav() {
                   isActive ? "text-primary" : "text-muted-foreground",
                 )}
                 style={
-                  isActive
-                    ? { fontVariationSettings: "'FILL' 1" }
-                    : undefined
+                  isActive ? { fontVariationSettings: "'FILL' 1" } : undefined
                 }
               >
                 {tab.icon}
