@@ -66,6 +66,8 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  // Tell Next.js the monorepo root so it traces files correctly across packages
+  outputFileTracingRoot: require("path").join(__dirname, "../../"),
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
