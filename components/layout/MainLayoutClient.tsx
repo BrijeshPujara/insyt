@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import { PageTransition } from "./PageTransition";
+import { BrandWordmark } from "@/components/brand/BrandWordmark";
 
 export function MainLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -44,19 +45,7 @@ export function MainLayoutClient({ children }: { children: React.ReactNode }) {
           >
             <span className="material-symbols-outlined text-[22px]">menu</span>
           </motion.button>
-          <div className="flex items-center gap-2">
-            <motion.div
-              whileHover={{ scale: 1.08 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
-              <span className="relative font-black text-primary text-[15px] leading-none tracking-tighter">I</span>
-            </motion.div>
-            <span className="text-sm font-black text-foreground tracking-[0.08em]">
-              INSYT<span className="text-primary">.</span>
-            </span>
-          </div>
+          <BrandWordmark size="sm" />
         </div>
 
         {/* Page content with transitions */}

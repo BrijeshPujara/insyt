@@ -8,6 +8,7 @@ import { useFinances } from "@/lib/store/finance-store";
 import { ThemeToggle } from "./ThemeToggle";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { BrandWordmark, BrandOrb } from "@/components/brand/BrandWordmark";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
@@ -56,21 +57,8 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="px-5 mb-8 flex items-center gap-3"
       >
-        <motion.div
-          whileHover={{ scale: 1.08 }}
-          transition={{ type: "spring", stiffness: 400, damping: 20 }}
-          className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 relative overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
-          <span className="relative font-black text-primary text-[19px] leading-none tracking-tighter">I</span>
-        </motion.div>
         <div className="flex-1">
-          <h1 className="text-[15px] font-black text-foreground leading-none tracking-[0.08em]">
-            INSYT<span className="text-primary">.</span>
-          </h1>
-          <p className="text-[11px] text-muted-foreground mt-0.5 tracking-wide">
-            Financial Intelligence
-          </p>
+          <BrandWordmark size="base" subtitle />
         </div>
         <button
           onClick={onClose}
@@ -171,8 +159,9 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             >
               auto_awesome
             </span>
-            <span className="relative z-10 flex-1 text-sm font-medium text-primary/80 group-hover:text-primary transition-colors">
-              Ask INSYT<span className="text-primary font-bold">.</span>
+            <span className="relative z-10 flex-1 text-sm font-medium text-primary/80 group-hover:text-primary transition-colors flex items-center gap-1">
+              Ask INSYT
+              <BrandOrb size={10} />
             </span>
             <span className="material-symbols-outlined text-[14px] text-primary/40 group-hover:text-primary/70 relative z-10 transition-colors">
               arrow_forward

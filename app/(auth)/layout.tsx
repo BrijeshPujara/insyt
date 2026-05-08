@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { BrandWordmark } from "@/components/brand/BrandWordmark";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -30,14 +31,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         {/* Brand */}
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-14">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
-              <span className="relative font-black text-primary text-[22px] leading-none tracking-tighter">I</span>
-            </div>
-            <span className="text-xl font-black text-foreground tracking-[0.08em]">
-              INSYT<span className="text-primary">.</span>
-            </span>
+          <div className="mb-14">
+            <BrandWordmark size="xl" />
           </div>
 
           <h2 className="text-[2rem] font-bold text-foreground leading-snug mb-4">
@@ -99,14 +94,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="absolute inset-0 auth-gradient pointer-events-none" />
 
         {/* Mobile brand */}
-        <div className="relative lg:hidden flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
-            <span className="relative font-black text-primary text-[17px] leading-none tracking-tighter">I</span>
-          </div>
-          <span className="text-lg font-black text-foreground tracking-[0.08em]">
-            INSYT<span className="text-primary">.</span>
-          </span>
+        <div className="relative lg:hidden mb-8">
+          <BrandWordmark size="lg" />
         </div>
 
         <div className="relative w-full max-w-[420px]">{children}</div>

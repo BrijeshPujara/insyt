@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useFinances } from "@/lib/store/finance-store";
 import type { ChatAPIMessage } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
+import { BrandWordmark } from "@/components/brand/BrandWordmark";
 
 interface Message {
   role: "user" | "assistant";
@@ -264,9 +265,10 @@ export function ChatWidget() {
               <CoachOrbMini thinking={isThinking} />
 
               <div className="flex-1 relative z-10">
-                <p className="text-sm font-semibold text-foreground">
-                  INSYT<span className="text-primary">.</span> AI
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <BrandWordmark size="sm" thinking={isThinking} />
+                  <span className="text-[13px] font-semibold text-muted-foreground">AI</span>
+                </div>
                 <div className="flex items-center gap-1.5">
                   <motion.span
                     className="w-1.5 h-1.5 rounded-full bg-emerald-400"
@@ -299,9 +301,10 @@ export function ChatWidget() {
                   className="space-y-4"
                 >
                   <div className="text-center pt-2 pb-1">
-                    <p className="text-sm font-semibold text-foreground mb-1">
-                      Hi! I&apos;m INSYT<span className="text-primary">.</span>
-                    </p>
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <p className="text-sm font-semibold text-foreground">Hi! I&apos;m</p>
+                      <BrandWordmark size="sm" />
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       Ask me anything about your finances.
                     </p>
