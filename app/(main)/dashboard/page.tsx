@@ -116,7 +116,7 @@ export default function DashboardPage() {
   return (
     <main className="flex-1 overflow-y-auto">
       <motion.div
-        className="p-6 max-w-7xl mx-auto space-y-5"
+        className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-5"
         variants={stagger(0.07)}
         initial="hidden"
         animate="show"
@@ -124,10 +124,10 @@ export default function DashboardPage() {
         {/* Header */}
         <motion.div
           variants={fadeUp}
-          className="flex items-start justify-between"
+          className="flex items-start justify-between gap-2"
         >
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {firstName
                 ? `${getGreeting()}, ${firstName} 👋`
                 : "Your financial dashboard"}
@@ -149,7 +149,7 @@ export default function DashboardPage() {
               >
                 <p className="text-xs text-muted-foreground">Health Score</p>
                 <p
-                  className={`text-lg font-bold ${
+                  className={`text-base sm:text-lg font-bold ${
                     summary.healthScore >= 80
                       ? "text-emerald-400"
                       : summary.healthScore >= 65
@@ -348,7 +348,7 @@ export default function DashboardPage() {
                     </span>
                   </motion.a>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
                   {[
                     {
                       label: "Total debt",
@@ -356,7 +356,7 @@ export default function DashboardPage() {
                       color: "text-red-400",
                     },
                     {
-                      label: "Monthly payments",
+                      label: "Monthly pay.",
                       value: summary.monthlyDebtPayments,
                       color: "text-amber-400",
                     },
@@ -370,10 +370,10 @@ export default function DashboardPage() {
                       isPercent: true,
                     },
                   ].map(({ label, value, color, isPercent }) => (
-                    <div key={label}>
-                      <p className="text-xs text-muted-foreground">{label}</p>
+                    <div key={label} className="min-w-0">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">{label}</p>
                       <p
-                        className={`text-lg font-bold tabular-nums no-transition ${color}`}
+                        className={`text-sm sm:text-lg font-bold tabular-nums no-transition truncate ${color}`}
                       >
                         {isPercent ? formatPercent(value) : formatGBP(value)}
                       </p>

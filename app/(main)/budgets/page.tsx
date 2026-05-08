@@ -8,10 +8,10 @@ import { stagger, fadeUp } from "@/lib/motion";
 function LoadingSkeleton() {
   return (
     <main className="flex-1 overflow-y-auto">
-      <div className="p-6 max-w-5xl mx-auto space-y-6">
+      <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-5">
         <div className="shimmer h-8 w-48 rounded-xl" />
-        <div className="grid grid-cols-3 gap-4">
-          {[1,2,3].map((n) => <div key={n} className="shimmer h-24 rounded-2xl" />)}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          {[1,2,3].map((n) => <div key={n} className="shimmer h-20 sm:h-24 rounded-2xl" />)}
         </div>
         <div className="shimmer h-64 rounded-2xl" />
       </div>
@@ -48,29 +48,29 @@ export default function BudgetsPage() {
   return (
     <main className="flex-1 overflow-y-auto">
       <motion.div
-        className="p-6 max-w-5xl mx-auto space-y-6"
+        className="p-4 sm:p-6 max-w-5xl mx-auto space-y-5 sm:space-y-6"
         variants={stagger(0.07)}
         initial="hidden"
         animate="show"
       >
-        <motion.div variants={fadeUp} className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Budget Planner</h1>
+        <motion.div variants={fadeUp} className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Budget Planner</h1>
             <p className="text-muted-foreground text-sm mt-0.5">Monthly breakdown of your spending</p>
           </div>
           <motion.a
             href="/add-finances"
             whileHover={{ scale: 1.04, y: -1 }}
             whileTap={{ scale: 0.97 }}
-            className="btn-primary inline-flex items-center gap-2 no-underline"
+            className="btn-primary inline-flex items-center gap-1.5 no-underline shrink-0 text-xs sm:text-sm !py-2 sm:!py-2.5 !px-3 sm:!px-4"
           >
-            <span className="material-symbols-outlined text-[16px]">add</span>
+            <span className="material-symbols-outlined text-[13px] sm:text-[16px]">add</span>
             Add expense
           </motion.a>
         </motion.div>
 
         {/* Summary strip */}
-        <motion.div variants={fadeUp} className="grid grid-cols-3 gap-4">
+        <motion.div variants={fadeUp} className="grid grid-cols-3 gap-2 sm:gap-4">
           {stats.map(({ label, value }, i) => {
             const { color, bg, border } = statColors[i];
             const displayColor = i === 2
@@ -79,6 +79,9 @@ export default function BudgetsPage() {
             const displayBg = i === 2
               ? (value >= 0 ? "bg-primary/10" : "bg-red-400/10")
               : bg;
+            const displayBorder = i === 2
+              ? (value >= 0 ? "border-primary/15" : "border-red-400/15")
+              : border;
 
             return (
               <motion.div
@@ -87,15 +90,15 @@ export default function BudgetsPage() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.35, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -3, transition: { duration: 0.18 } }}
-                className={`glass-card rounded-2xl p-4 border ${border}`}
+                className={`glass-card rounded-2xl p-3 sm:p-4 border ${displayBorder} flex flex-col`}
               >
-                <div className={`w-9 h-9 rounded-xl ${displayBg} flex items-center justify-center mb-3`}>
-                  <span className={`material-symbols-outlined text-[18px] ${displayColor}`}>
+                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl ${displayBg} flex items-center justify-center mb-2 sm:mb-3`}>
+                  <span className={`material-symbols-outlined text-[13px] sm:text-[18px] ${displayColor}`}>
                     {i === 0 ? "trending_up" : i === 1 ? "trending_down" : "savings"}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground mb-1">{label}</p>
-                <p className={`text-xl font-bold ${displayColor}`}>{formatGBP(value)}</p>
+                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight mb-0.5">{label}</p>
+                <p className={`text-xs sm:text-lg font-bold tabular-nums leading-tight truncate ${displayColor}`}>{formatGBP(value)}</p>
               </motion.div>
             );
           })}

@@ -19,7 +19,7 @@ const typeLabels: Record<string, string> = {
 function LoadingSkeleton() {
   return (
     <main className="flex-1 overflow-y-auto">
-      <div className="p-6 max-w-4xl mx-auto space-y-5">
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-4 sm:space-y-5">
         <div className="space-y-2">
           <div className="shimmer h-8 w-56 rounded-xl" />
           <div className="shimmer h-4 w-72 rounded-lg" />
@@ -39,7 +39,7 @@ export default function AdvisoryPage() {
   return (
     <main className="flex-1 overflow-y-auto">
       <motion.div
-        className="p-6 max-w-4xl mx-auto space-y-6"
+        className="p-4 sm:p-6 max-w-4xl mx-auto space-y-5 sm:space-y-6"
         variants={stagger(0.07)}
         initial="hidden"
         animate="show"

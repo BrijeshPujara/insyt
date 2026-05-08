@@ -8,10 +8,10 @@ import { stagger, fadeUp } from "@/lib/motion";
 function LoadingSkeleton() {
   return (
     <main className="flex-1 overflow-y-auto">
-      <div className="p-6 max-w-5xl mx-auto space-y-6">
+      <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-5">
         <div className="shimmer h-8 w-48 rounded-xl" />
-        <div className="grid grid-cols-3 gap-4">
-          {[1,2,3].map((n) => <div key={n} className="shimmer h-24 rounded-2xl" />)}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          {[1,2,3].map((n) => <div key={n} className="shimmer h-20 sm:h-24 rounded-2xl" />)}
         </div>
         {[1,2].map((n) => <div key={n} className="shimmer h-36 rounded-2xl" />)}
       </div>
@@ -39,29 +39,29 @@ export default function DebtPage() {
   return (
     <main className="flex-1 overflow-y-auto">
       <motion.div
-        className="p-6 max-w-5xl mx-auto space-y-6"
+        className="p-4 sm:p-6 max-w-5xl mx-auto space-y-5 sm:space-y-6"
         variants={stagger(0.07)}
         initial="hidden"
         animate="show"
       >
-        <motion.div variants={fadeUp} className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Debt Breakdown</h1>
+        <motion.div variants={fadeUp} className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Debt Breakdown</h1>
             <p className="text-muted-foreground text-sm mt-0.5">Track and manage all your debts</p>
           </div>
           <motion.a
             href="/add-finances"
             whileHover={{ scale: 1.04, y: -1 }}
             whileTap={{ scale: 0.97 }}
-            className="btn-primary inline-flex items-center gap-2 no-underline"
+            className="btn-primary inline-flex items-center gap-1.5 no-underline shrink-0 text-xs sm:text-sm !py-2 sm:!py-2.5 !px-3 sm:!px-4"
           >
-            <span className="material-symbols-outlined text-[16px]">add</span>
+            <span className="material-symbols-outlined text-[13px] sm:text-[16px]">add</span>
             Add debt
           </motion.a>
         </motion.div>
 
         {/* Summary stats */}
-        <motion.div variants={fadeUp} className="grid grid-cols-3 gap-4">
+        <motion.div variants={fadeUp} className="grid grid-cols-3 gap-2 sm:gap-4">
           {[
             { label: "Total debt",        value: formatGBP(summary.totalDebt),           color: "text-red-400",    bg: "bg-red-400/10",    border: "border-red-400/15",    icon: "credit_card"    },
             { label: "Monthly payments",  value: formatGBP(summary.monthlyDebtPayments), color: "text-amber-400",  bg: "bg-amber-400/10",  border: "border-amber-400/15",  icon: "calendar_month" },
@@ -73,15 +73,13 @@ export default function DebtPage() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.35, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -3, transition: { duration: 0.18 } }}
-              className={`glass-card rounded-2xl p-4 border ${border} flex items-center gap-3`}
+              className={`glass-card rounded-2xl p-3 sm:p-4 border ${border} flex flex-col`}
             >
-              <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
-                <span className={`material-symbols-outlined text-[20px] ${color}`}>{icon}</span>
+              <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl ${bg} flex items-center justify-center mb-2 sm:mb-3 shrink-0`}>
+                <span className={`material-symbols-outlined text-[13px] sm:text-[18px] ${color}`}>{icon}</span>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">{label}</p>
-                <p className={`text-lg font-bold ${color}`}>{value}</p>
-              </div>
+              <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight mb-0.5">{label}</p>
+              <p className={`text-xs sm:text-base font-bold tabular-nums leading-tight truncate ${color}`}>{value}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -147,21 +145,21 @@ export default function DebtPage() {
                     key={debt.id}
                     variants={fadeUp}
                     whileHover={{ y: -2, transition: { duration: 0.18 } }}
-                    className="glass-card rounded-2xl p-5 relative overflow-hidden"
+                    className="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden"
                   >
                     {i === 0 && (
                       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/6 to-transparent pointer-events-none rounded-2xl" />
                     )}
                     <div className="relative flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-red-400/10 flex items-center justify-center border border-red-400/15">
-                          <span className="material-symbols-outlined text-red-400 text-[20px]">
+                      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-red-400/10 flex items-center justify-center border border-red-400/15 shrink-0">
+                          <span className="material-symbols-outlined text-red-400 text-[18px] sm:text-[20px]">
                             {debtTypeIcon(debt.type)}
                           </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="text-base font-semibold text-foreground">{debt.name}</p>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                            <p className="text-sm sm:text-base font-semibold text-foreground">{debt.name}</p>
                             {i === 0 && (
                               <motion.span
                                 initial={{ scale: 0 }}
@@ -176,21 +174,21 @@ export default function DebtPage() {
                           <p className="text-xs text-muted-foreground">{debtTypeLabel(debt.type)}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-red-400">{formatGBP(debt.balance)}</p>
+                      <div className="text-right shrink-0">
+                        <p className="text-base sm:text-lg font-bold text-red-400 tabular-nums">{formatGBP(debt.balance)}</p>
                         <p className="text-xs text-muted-foreground">balance</p>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3 text-center mb-3">
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-3 text-center mb-3">
                       {[
                         { label: "APR",          value: `${debt.interest_rate}%`, color: "text-amber-400" },
                         { label: "Min. payment", value: `${formatGBP(debt.minimum_payment)}/mo`, color: "text-foreground" },
                         { label: "Est. payoff",  value: months ? `${months} mo` : "N/A",          color: "text-foreground" },
                       ].map(({ label, value, color }) => (
-                        <div key={label} className="bg-muted/40 rounded-xl p-2.5">
-                          <p className="text-[10px] text-muted-foreground mb-0.5">{label}</p>
-                          <p className={`text-sm font-bold ${color}`}>{value}</p>
+                        <div key={label} className="bg-muted/40 rounded-xl p-2 sm:p-2.5">
+                          <p className="text-[9px] sm:text-[10px] text-muted-foreground mb-0.5 leading-tight">{label}</p>
+                          <p className={`text-xs sm:text-sm font-bold tabular-nums truncate ${color}`}>{value}</p>
                         </div>
                       ))}
                     </div>
