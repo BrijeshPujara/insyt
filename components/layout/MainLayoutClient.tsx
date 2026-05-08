@@ -35,7 +35,7 @@ export function MainLayoutClient({ children }: { children: React.ReactNode }) {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col min-h-[100dvh] overflow-hidden lg:ml-64 relative z-10">
+      <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 relative z-10">
         {/* Mobile top bar */}
         <div className="lg:hidden flex items-center gap-3 h-14 px-4 border-b border-border bg-background/85 backdrop-blur-md sticky top-0 z-30 shrink-0">
           <motion.button

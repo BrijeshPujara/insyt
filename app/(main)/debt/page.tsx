@@ -152,7 +152,7 @@ export default function DebtPage() {
                     {i === 0 && (
                       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/6 to-transparent pointer-events-none rounded-2xl" />
                     )}
-                    <div className="relative flex items-start justify-between mb-4">
+                    <div className="relative flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-red-400/10 flex items-center justify-center border border-red-400/15">
                           <span className="material-symbols-outlined text-red-400 text-[20px]">
